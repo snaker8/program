@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>과사람 90분 수업 — 빠른 참조 카드</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  @page { size: A4; margin: 10mm; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #FAF7F2;
+    color: #2B2620;
+    padding: 18mm 14mm;
+    max-width: 210mm;
+    margin: 0 auto;
+    line-height: 1.5;
+    font-size: 9pt;
+  }
+  @media print {
+    body { padding: 0; max-width: none; background: #fff; }
+  }
+
+  .gold  { color: #C8A265; }
+  .muted { color: #7A7267; }
+
+  header { text-align: center; border-bottom: 1px solid #C8A265; padding-bottom: 6mm; margin-bottom: 5mm; }
+  header .brand { font-size: 9pt; letter-spacing: 0.4em; color: #C8A265; text-transform: uppercase; margin-bottom: 3mm; }
+  header h1 { font-family: 'Cormorant Garamond', serif; font-size: 24pt; font-weight: 500; letter-spacing: 0.04em; line-height: 1.15; }
+  header .sub { font-size: 8.5pt; color: #7A7267; margin-top: 3mm; letter-spacing: 0.05em; }
+
+  section { margin-bottom: 5mm; page-break-inside: avoid; }
+  section h2 {
+    font-family: 'Cormorant Garamond', serif; font-size: 13pt; font-weight: 500;
+    margin-bottom: 2.5mm; border-bottom: 1px solid #E5DDD0; padding-bottom: 1.5mm;
+    display: flex; align-items: baseline; gap: 2.5mm;
+  }
+  section h2 .num { font-size: 11pt; color: #C8A265; font-style: italic; }
+
+  /* 90분 흐름 - 5단계 */
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5mm; margin-top: 2.5mm; }
+  .flow .step { background: #FFF; border: 1px solid #E5DDD0; padding: 4mm 2mm 3mm; text-align: center; position: relative; }
+  .flow .step .order {
+    position: absolute; top: -2.5mm; left: 50%; transform: translateX(-50%);
+    background: #C8A265; color: #FFF; font-size: 6.5pt;
+    width: 5mm; height: 5mm; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  }
+  .flow .step .time { font-family: 'Cormorant Garamond', serif; font-size: 12pt; color: #C8A265; margin-bottom: 1mm; }
+  .flow .step .title { font-weight: 500; margin-bottom: 1mm; font-size: 9pt; }
+  .flow .step .desc { font-size: 7.5pt; color: #7A7267; line-height: 1.4; }
+
+  /* 시차 배치 타임라인 */
+  .timeline {
+    background: #FFF;
+    border: 1px solid #E5DDD0;
+    padding: 4mm 4mm 3mm;
+    margin-top: 2mm;
+  }
+  .tl-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5mm;
+    font-size: 7.5pt;
+  }
+  .tl-row:last-of-type { margin-bottom: 0; }
+  .tl-row .tl-lab {
+    width: 14mm;
+    flex-shrink: 0;
+    font-weight: 500;
+    color: #2B2620;
+    padding-right: 2mm;
+  }
+  .tl-bar {
+    flex: 1;
+    height: 5mm;
+    position: relative;
+    background: #F5F0E6;
+    border-radius: 1px;
+  }
+  .tl-seg {
+    position: absolute; top: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 6.5pt;
+    color: #FFF;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .tl-seg.review   { background: #7A7267; }
+  .tl-seg.concept  { background: #2B2620; }
+  .tl-seg.solo     { background: transparent; border-top: 1px dashed #C8A265; border-bottom: 1px dashed #C8A265; color: #7A7267; font-style: italic; }
+  .tl-seg.test     { background: #C8A265; }
+  .tl-seg.feedback { background: #4A7C59; }
+  .tl-seg.orzo     { background: #E8D9BC; color: #7A7267; }
+  .tl-rule {
+    display: flex;
+    margin-left: 14mm;
+    margin-top: 2mm;
+    color: #7A7267;
+    font-size: 6.5pt;
+  }
+  .tl-rule span { flex: 1; text-align: left; border-left: 1px solid #E5DDD0; padding-left: 1mm; }
+  .tl-rule span:last-child { border-right: 1px solid #E5DDD0; padding-right: 1mm; text-align: right; padding-left: 0; }
+  .tl-legend {
+    display: flex; gap: 3mm; flex-wrap: wrap;
+    margin-top: 3mm; padding-top: 2.5mm;
+    border-top: 1px solid #F0EAE0;
+    font-size: 7pt; color: #7A7267;
+  }
+  .tl-legend .item { display: flex; align-items: center; gap: 1mm; }
+  .tl-legend .swatch {
+    display: inline-block; width: 4mm; height: 2.5mm; border-radius: 1px;
+  }
+  .tl-legend .sw-rev { background: #7A7267; }
+  .tl-legend .sw-con { background: #2B2620; }
+  .tl-legend .sw-sol { background: transparent; border: 1px dashed #C8A265; }
+  .tl-legend .sw-tes { background: #C8A265; }
+  .tl-legend .sw-fb  { background: #4A7C59; }
+  .tl-legend .sw-orz { background: #E8D9BC; }
+  .tl-note {
+    margin-top: 2mm;
+    font-size: 6.8pt;
+    line-height: 1.5;
+  }
+  .tl-note strong { color: #C8A265; }
+  .tl-note .warn  { color: #B44641; }
+
+  .self-detail { background: #FFF; border: 1px solid #E5DDD0; padding: 3mm; margin-top: 2mm; font-size: 8.5pt; }
+  .arrow-flow { display: flex; align-items: center; gap: 2mm; flex-wrap: wrap; }
+  .stage { background: #FAF7F2; border: 1px solid #E5DDD0; padding: 2mm 3mm; flex: 1; min-width: 30mm; text-align: center; }
+  .stage strong { display: block; font-size: 8pt; margin-bottom: 0.5mm; }
+  .stage span { font-size: 7pt; color: #7A7267; }
+  .arrow { color: #C8A265; font-weight: 500; font-size: 12pt; }
+  .branch { background: #FFF8EC; border-left: 2px solid #C8A265; margin-top: 2mm; padding: 1.5mm 3mm; font-size: 7.5pt; color: #7A7267; }
+
+  /* 학생 룰 */
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 2mm; }
+  .rule-card { background: #FFF; border: 1px solid #E5DDD0; border-left: 3px solid #C8A265; padding: 3mm 4mm; }
+  .rule-card .num { font-family: 'Cormorant Garamond', serif; font-size: 14pt; color: #C8A265; line-height: 1; margin-bottom: 1mm; }
+  .rule-card h4 { font-size: 9pt; font-weight: 500; margin-bottom: 1mm; }
+  .rule-card p { font-size: 8pt; color: #7A7267; line-height: 1.45; }
+
+  /* 등급 */
+  .grade-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5mm; }
+  .grade-card { border: 1px solid #E5DDD0; background: #FFF; padding: 3.5mm; }
+  .grade-card .greek { font-family: 'Cormorant Garamond', serif; font-size: 20pt; line-height: 1; margin-bottom: 1.5mm; }
+  .grade-card.alpha .greek { color: #4A7C59; }
+  .grade-card.beta  .greek { color: #C8A265; }
+  .grade-card.gamma .greek { color: #B44641; }
+  .grade-card .pct { font-size: 8.5pt; color: #7A7267; margin-bottom: 1.5mm; }
+  .grade-card .desc { font-size: 8pt; line-height: 1.4; }
+
+  /* 단계 */
+  .stage-list { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5mm; }
+  .stage-card { border: 1px solid #E5DDD0; background: #FFF; padding: 2.5mm 1.5mm; text-align: center; }
+  .stage-card .badge { font-family: 'Cormorant Garamond', serif; font-size: 12pt; margin-bottom: 0.5mm; }
+  .stage-card.s1 .badge { color: #B44641; }
+  .stage-card.s2 .badge { color: #C8A265; }
+  .stage-card.s3 .badge { color: #7A9B6E; }
+  .stage-card.s4 .badge { color: #4A7C59; }
+  .stage-card.s5 .badge { color: #2B2620; }
+  .stage-card .name { font-size: 8pt; font-weight: 500; }
+  .stage-card .desc { font-size: 7pt; color: #7A7267; margin-top: 0.5mm; line-height: 1.3; }
+
+  /* 교재 매트릭스 */
+  .textbook-table { width: 100%; border-collapse: collapse; background: #FFF; margin-top: 2mm; font-size: 8.5pt; }
+  .textbook-table th, .textbook-table td { padding: 2.5mm 3mm; border-bottom: 1px solid #F0EAE0; text-align: left; }
+  .textbook-table thead { background: #FAF7F2; }
+  .textbook-table thead th {
+    font-size: 7.5pt; color: #7A7267; font-weight: 500; letter-spacing: 0.05em;
+    text-transform: uppercase; border-bottom: 1px solid #C8A265;
+  }
+  .textbook-table .level { font-family: 'Cormorant Garamond', serif; color: #C8A265; font-size: 11pt; width: 14mm; }
+  .textbook-table tr:last-child td { border-bottom: none; }
+  .textbook-table .empty { color: #C5BEB1; font-size: 7.5pt; font-style: italic; }
+
+  /* 오르조 안내 */
+  .orzo-info {
+    background: #FFF; border: 1px solid #E5DDD0; padding: 3mm 4mm; margin-top: 2mm; font-size: 8.5pt;
+    display: flex; align-items: center; gap: 4mm; flex-wrap: wrap;
+  }
+  .orzo-info .label { font-family: 'Cormorant Garamond', serif; font-size: 11pt; color: #C8A265; letter-spacing: 0.05em; }
+  .orzo-info .sep { color: #C5BEB1; }
+
+  /* 절대 금지 */
+  .never { background: #FFF; border-left: 3px solid #B44641; padding: 3mm 4mm; margin-top: 2mm; }
+  .never h3 { font-size: 8.5pt; color: #B44641; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.5mm; }
+  .never ul { list-style: none; padding-left: 0; font-size: 8pt; }
+  .never li { padding-left: 4.5mm; position: relative; margin-bottom: 0.7mm; }
+  .never li::before { content: "✕"; position: absolute; left: 0; color: #B44641; }
+
+  footer {
+    margin-top: 6mm; padding-top: 3mm; border-top: 1px solid #E5DDD0;
+    display: flex; justify-content: space-between; font-size: 7pt; color: #A89F92;
+  }
+  footer .gold { color: #C8A265; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">과사람수학</div>
+  <h1>90분 <span class="gold">개별맞춤</span> 수업 운영</h1>
+  <div class="sub">담임 빠른 참조 카드 — 책상에 두고 보세요</div>
+</header>
+
+<!-- I. 90분 5단계 -->
+<section>
+  <h2><span class="num">I.</span> 90분 수업 5단계</h2>
+  <div class="flow">
+    <div class="step">
+      <div class="order">1</div>
+      <div class="time">10'</div>
+      <div class="title">리뷰 테스트</div>
+      <div class="desc">전 수업 복습<br>오답은 풀이시간 질문</div>
+    </div>
+    <div class="step">
+      <div class="order">2</div>
+      <div class="time">5~10'</div>
+      <div class="title">개념 설명</div>
+      <div class="desc">선생님 개별 설명<br>+ 서술형 개념노트</div>
+    </div>
+    <div class="step">
+      <div class="order">3</div>
+      <div class="time">자기 풀이</div>
+      <div class="title">개념확인 → 연습</div>
+      <div class="desc">개념노트 작성<br>→ 15~20문제</div>
+    </div>
+    <div class="step">
+      <div class="order">4</div>
+      <div class="time">확인</div>
+      <div class="title">테스트</div>
+      <div class="desc">채점 + 피드백<br>α/β/γ 등급</div>
+    </div>
+    <div class="step">
+      <div class="order">5</div>
+      <div class="time">잔여</div>
+      <div class="title">오르조</div>
+      <div class="desc">남는 시간 학습<br>소단원별 학습교재</div>
+    </div>
+  </div>
+</section>
+
+<!-- II. 시차 배치 타임라인 -->
+<section>
+  <h2><span class="num">II.</span> 시차 배치 — 90분 5명 타임라인</h2>
+  <div class="timeline">
+    <!-- 학생 A (시작 0분, 리뷰→개념→자풀→테스트→피드백→오르조) -->
+    <div class="tl-row">
+      <span class="tl-lab">학생 A</span>
+      <div class="tl-bar">
+        <div class="tl-seg review"   style="left: 0%;     width: 11.11%;">리뷰</div>
+        <div class="tl-seg concept"  style="left: 11.11%; width: 5.56%;">개념</div>
+        <div class="tl-seg solo"     style="left: 16.67%; width: 55.56%;">자기 풀이</div>
+        <div class="tl-seg test"     style="left: 72.22%; width: 11.11%;">테스트</div>
+        <div class="tl-seg feedback" style="left: 83.33%; width: 5.56%;">피드백</div>
+        <div class="tl-seg orzo"     style="left: 88.89%; width: 11.11%;">오르조</div>
+      </div>
+    </div>
+    <!-- 학생 B (개념 +5, 앞 오르조 5분) -->
+    <div class="tl-row">
+      <span class="tl-lab">학생 B</span>
+      <div class="tl-bar">
+        <div class="tl-seg review"   style="left: 0%;     width: 11.11%;">리뷰</div>
+        <div class="tl-seg orzo"     style="left: 11.11%; width: 5.56%;">오르조</div>
+        <div class="tl-seg concept"  style="left: 16.67%; width: 5.56%;">개념</div>
+        <div class="tl-seg solo"     style="left: 22.22%; width: 55.56%;">자기 풀이</div>
+        <div class="tl-seg test"     style="left: 77.78%; width: 11.11%;">테스트</div>
+        <div class="tl-seg feedback" style="left: 88.89%; width: 5.56%;">피드백</div>
+        <div class="tl-seg orzo"     style="left: 94.44%; width: 5.56%;"></div>
+      </div>
+    </div>
+    <!-- 학생 C (개념 +10, 앞 오르조 10분) -->
+    <div class="tl-row">
+      <span class="tl-lab">학생 C</span>
+      <div class="tl-bar">
+        <div class="tl-seg review"   style="left: 0%;     width: 11.11%;">리뷰</div>
+        <div class="tl-seg orzo"     style="left: 11.11%; width: 11.11%;">오르조</div>
+        <div class="tl-seg concept"  style="left: 22.22%; width: 5.56%;">개념</div>
+        <div class="tl-seg solo"     style="left: 27.78%; width: 55.56%;">자기 풀이</div>
+        <div class="tl-seg test"     style="left: 83.33%; width: 11.11%;">테스트</div>
+        <div class="tl-seg feedback" style="left: 94.44%; width: 5.56%;"></div>
+      </div>
+    </div>
+    <!-- 학생 D (개념 +15, 앞 오르조 15분) -->
+    <div class="tl-row">
+      <span class="tl-lab">학생 D</span>
+      <div class="tl-bar">
+        <div class="tl-seg review"   style="left: 0%;     width: 11.11%;">리뷰</div>
+        <div class="tl-seg orzo"     style="left: 11.11%; width: 16.67%;">오르조</div>
+        <div class="tl-seg concept"  style="left: 27.78%; width: 5.56%;">개념</div>
+        <div class="tl-seg solo"     style="left: 33.33%; width: 55.56%;">자기 풀이</div>
+        <div class="tl-seg test"     style="left: 88.89%; width: 11.11%;">테스트</div>
+      </div>
+    </div>
+    <!-- 학생 E (개념 +20, 앞 오르조 20분) -->
+    <div class="tl-row">
+      <span class="tl-lab">학생 E</span>
+      <div class="tl-bar">
+        <div class="tl-seg review"   style="left: 0%;     width: 11.11%;">리뷰</div>
+        <div class="tl-seg orzo"     style="left: 11.11%; width: 22.22%;">오르조</div>
+        <div class="tl-seg concept"  style="left: 33.33%; width: 5.56%;">개념</div>
+        <div class="tl-seg solo"     style="left: 38.89%; width: 55.56%;">자기 풀이</div>
+        <div class="tl-seg test"     style="left: 94.44%; width: 5.56%;">테</div>
+      </div>
+    </div>
+
+    <!-- 룰러 -->
+    <div class="tl-rule">
+      <span>0'</span><span>15'</span><span>30'</span><span>45'</span><span>60'</span><span>75'</span><span>90'</span>
+    </div>
+
+    <!-- 범례 -->
+    <div class="tl-legend">
+      <div class="item"><span class="swatch sw-rev"></span>리뷰 테스트 (전원 동시, 10분)</div>
+      <div class="item"><span class="swatch sw-con"></span>개념 설명 1:1 (5분, 시차)</div>
+      <div class="item"><span class="swatch sw-sol"></span>자기 풀이 (개념노트 → 연습)</div>
+      <div class="item"><span class="swatch sw-tes"></span>확인 테스트 (10분)</div>
+      <div class="item"><span class="swatch sw-fb"></span>피드백 1:1 (5분)</div>
+      <div class="item"><span class="swatch sw-orz"></span>오르조 (잔여)</div>
+    </div>
+
+    <div class="tl-note">
+      ※ <strong>오르조 = 빈 틈 메우기</strong> — 학생 B~E는 개념 설명 차례를 기다리는 동안, 모든 학생은 본 수업 후 잔여 시간에 오르조 학습교재를 진행합니다. <strong>1분도 비지 않습니다.</strong><br>
+      <span class="warn">※ 학생 D, E는 90분 안에 피드백을 못 받을 수 있음 → 다음 회차 시작 전 만회 또는 정원 4명 운영 권장.</span>
+    </div>
+  </div>
+</section>
+
+<!-- III. 자기 풀이 -->
+<section>
+  <h2><span class="num">III.</span> 자기 풀이 — 단계별 흐름</h2>
+  <div class="self-detail">
+    <div class="arrow-flow">
+      <div class="stage">
+        <strong>① 개념 확인 학습</strong>
+        <span>서술형 개념노트 작성</span>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage">
+        <strong>② 확인 연습문제</strong>
+        <span>15~20문제 풀이</span>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage">
+        <strong>③ 채점 + 피드백</strong>
+        <span>오답 1:1 코멘트</span>
+      </div>
+    </div>
+    <div class="branch">
+      <strong>※ 미완료 시</strong> — 개념노트가 부족하면 ①번으로 돌아가 재설명·피드백 후 다시 시작.
+      대충 넘어가지 말 것.
+    </div>
+  </div>
+</section>
+
+<!-- IV. 학생 룰 -->
+<section>
+  <h2><span class="num">IV.</span> 학생이 지켜야 할 프로세스</h2>
+  <div class="rules">
+    <div class="rule-card">
+      <div class="num">1</div>
+      <h4>수업 시작 즉시 — 리뷰 테스트</h4>
+      <p>전 수업 내용 복습 테스트를 먼저 진행. 오답은 본인이 정리한 후, 자기 풀이 시간에 선생님께 개별 질문.</p>
+    </div>
+    <div class="rule-card">
+      <div class="num">2</div>
+      <h4>모든 빈 시간 — 즉시 오르조</h4>
+      <p>개념 설명 차례를 기다리는 동안, 본 수업이 일찍 끝났을 때, 중간에 빈 시간이 생겼을 때 — 1분이라도 비면 즉시 오르조 학습교재로 넘어감. 휴대폰·잡담 X.</p>
+    </div>
+  </div>
+</section>
+
+<!-- V. 알파베타감마 -->
+<section>
+  <h2><span class="num">V.</span> 단원 완성도 등급</h2>
+  <div class="grade-grid">
+    <div class="grade-card alpha">
+      <div class="greek">α</div>
+      <div class="pct">정답률 80% 이상</div>
+      <div class="desc">마스터 — 다음 단원 진도</div>
+    </div>
+    <div class="grade-card beta">
+      <div class="greek">β</div>
+      <div class="pct">60 ~ 79%</div>
+      <div class="desc">안정 — 같은 단원 응용 보강</div>
+    </div>
+    <div class="grade-card gamma">
+      <div class="greek">γ</div>
+      <div class="pct">60% 미만</div>
+      <div class="desc">불안정 — 같은 단원 재학습</div>
+    </div>
+  </div>
+</section>
+
+<!-- VI. 단계 -->
+<section>
+  <h2><span class="num">VI.</span> 학습 단계 — 학년 무관, 단계로 묶는다</h2>
+  <div class="stage-list">
+    <div class="stage-card s1">
+      <div class="badge">S1</div>
+      <div class="name">진단·복구</div>
+      <div class="desc">신규 온보딩<br>γ 단원 다수</div>
+    </div>
+    <div class="stage-card s2">
+      <div class="badge">S2</div>
+      <div class="name">따라잡기</div>
+      <div class="desc">현행 진도<br>따라잡는 중</div>
+    </div>
+    <div class="stage-card s3">
+      <div class="badge">S3</div>
+      <div class="name">안정·선행</div>
+      <div class="desc">현행 안정<br>+ 선행 시작</div>
+    </div>
+    <div class="stage-card s4">
+      <div class="badge">S4</div>
+      <div class="name">본격 선행</div>
+      <div class="desc">1학기~1학년<br>선행 진행</div>
+    </div>
+    <div class="stage-card s5">
+      <div class="badge">S5</div>
+      <div class="name">심화·내신</div>
+      <div class="desc">내신 3~4주 전<br>또는 심화</div>
+    </div>
+  </div>
+</section>
+
+<!-- VII. 교재 매트릭스 -->
+<section>
+  <h2><span class="num">VII.</span> 난이도별 교재 매트릭스</h2>
+  <table class="textbook-table">
+    <thead>
+      <tr>
+        <th>난이도</th>
+        <th>RCC 교재 (개념·진도용)</th>
+        <th>오르조 학습 교재</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="level">L1</td><td>쎈 B</td><td>베이직쎈</td></tr>
+      <tr><td class="level">L2</td><td>라이트쎈</td><td>개념유형 라이트</td></tr>
+      <tr><td class="level">L3</td><td>쎈 (B단계)</td><td>RPM</td></tr>
+      <tr><td class="level">L4</td><td>바이블 유형 (ON)</td><td>내신고쟁이</td></tr>
+      <tr><td class="level">L5</td><td>쎈 (C단계)</td><td class="empty">상위 학습교재 별도 배정</td></tr>
+      <tr><td class="level">L6</td><td>일품</td><td class="empty">상위 학습교재 별도 배정</td></tr>
+    </tbody>
+  </table>
+  <div class="orzo-info">
+    <span class="label">오르조 준비 교재</span>
+    <span>중1 · 중2 · 중3</span>
+    <span class="sep">·</span>
+    <span>소단원별 20~25문제</span>
+    <span class="sep">·</span>
+    <span>소단원별 TEST 10문제</span>
+  </div>
+</section>
+
+<!-- VIII. 절대 금지 -->
+<section>
+  <div class="never">
+    <h3>절대 하지 않는 것 NEVER</h3>
+    <ul>
+      <li>리뷰 테스트 건너뛰기 — 매 수업 첫 10분은 무조건 리뷰</li>
+      <li>개념 노트 미완성 상태로 연습문제 진행 — 미완료 시 반드시 재설명</li>
+      <li>한 학생에게 한 회차에 3개 이상 단원 다루기 — 오늘 1개 타겟이 원칙</li>
+      <li>확인 테스트 결과를 다음 날 입력 — 반드시 당일</li>
+      <li>학생 답을 직접 알려주기 — 개입은 "어디서 막혔어?" 까지만</li>
+      <li>남는 시간에 휴대폰·잡담 허용 — 즉시 오르조로 넘어감</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <span>과사람수학 · 동래센터</span>
+  <span class="gold">VER 2.0 · 2026</span>
+</footer>
+
+</body>
+</html>
