@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>담임 90분 운영 매뉴얼 · 과사람수학</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #FAF7F2;
+  --paper:    #FFFFFF;
+  --ink:      #2B2620;
+  --muted:    #7A7267;
+  --line:     #E5DDD0;
+  --line-soft:#F0EAE0;
+  --gold:     #C8A265;
+  --gold-soft:#E8D9BC;
+  --green:    #4A7C59;
+  --green-mid:#7A9B6E;
+  --red:      #B44641;
+  --beige:    #FAF7F2;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 16px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 4rem 2rem 6rem;
+}
+
+@media (max-width: 640px) {
+  .page { padding: 2rem 1.25rem 4rem; }
+  body { font-size: 15px; }
+}
+
+/* HEADER */
+header.cover {
+  text-align: center;
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 2.5rem;
+  margin-bottom: 3rem;
+}
+header.cover .brand {
+  font-size: 0.72rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+header.cover h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  font-size: 2.6rem;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  color: var(--ink);
+}
+header.cover .sub {
+  font-size: 0.92rem;
+  color: var(--muted);
+  margin-top: 1rem;
+  letter-spacing: 0.04em;
+}
+
+/* TOC (왼쪽 사이드 — desktop) */
+.toc {
+  position: fixed;
+  top: 4rem;
+  left: 2rem;
+  width: 200px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.toc-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+.toc a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.15rem 0;
+  border-left: 1px solid transparent;
+  padding-left: 0.5rem;
+  transition: all 0.15s;
+}
+.toc a:hover {
+  color: var(--ink);
+  border-left-color: var(--gold);
+}
+@media (max-width: 1100px) {
+  .toc { display: none; }
+}
+
+/* HEADINGS */
+h1, h2, h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+h2 {
+  font-size: 1.7rem;
+  margin: 3rem 0 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--line);
+  scroll-margin-top: 2rem;
+}
+h2:first-of-type { margin-top: 1rem; }
+h3 {
+  font-size: 1.25rem;
+  margin: 2rem 0 0.75rem;
+  color: var(--ink);
+}
+h4 {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  margin: 1.5rem 0 0.5rem;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+/* TEXT */
+p { margin: 0 0 1rem; }
+p + p { margin-top: 0; }
+strong { font-weight: 700; color: var(--ink); }
+em { font-style: italic; color: var(--muted); }
+
+/* QUOTES */
+blockquote {
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  background: var(--paper);
+  border-left: 3px solid var(--gold);
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-style: italic;
+}
+blockquote p { margin: 0; }
+
+/* LISTS */
+ul, ol {
+  margin: 0 0 1rem;
+  padding-left: 1.5rem;
+}
+li { margin-bottom: 0.4rem; }
+li::marker { color: var(--gold); }
+
+/* CODE */
+code {
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  background: var(--line-soft);
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+  font-size: 0.86em;
+  color: var(--ink);
+}
+pre {
+  background: var(--ink);
+  color: #E8D9BC;
+  padding: 1rem 1.25rem;
+  border-radius: 2px;
+  overflow-x: auto;
+  margin: 1rem 0 1.5rem;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* TABLES */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0 1.5rem;
+  font-size: 0.92rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+th, td {
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: top;
+}
+thead th {
+  background: var(--bg);
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+tbody tr:last-child td { border-bottom: none; }
+td strong { color: var(--gold); }
+
+/* HR (구분선) */
+hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 3rem 0;
+  position: relative;
+}
+hr::after {
+  content: '◆';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  padding: 0 1rem;
+  color: var(--gold);
+  font-size: 0.7rem;
+}
+
+/* LINKS */
+a {
+  color: var(--gold);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+a:hover { border-bottom-color: var(--gold); }
+
+/* DOC NAV (상단 4개 문서 점프) */
+.doc-nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+}
+.doc-nav a {
+  padding: 0.4rem 0.85rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  border-radius: 2px;
+}
+.doc-nav a:hover {
+  border-color: var(--gold);
+  color: var(--ink);
+  border-bottom: 1px solid var(--gold);
+}
+.doc-nav a.active {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+/* FOOTER */
+footer {
+  margin-top: 5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+footer .gold { color: var(--gold); }
+
+/* PRINT */
+@media print {
+  @page { size: A4; margin: 16mm 14mm; }
+  body { background: white; font-size: 10.5pt; }
+  .page { max-width: none; padding: 0; }
+  .toc, .doc-nav { display: none !important; }
+  header.cover { padding-bottom: 1.5rem; margin-bottom: 1.5rem; page-break-after: avoid; }
+  header.cover h1 { font-size: 22pt; }
+  h2 { page-break-after: avoid; font-size: 14pt; margin-top: 1.5rem; }
+  h3 { page-break-after: avoid; font-size: 12pt; }
+  table, blockquote, pre { page-break-inside: avoid; }
+  ul, ol { page-break-inside: avoid; }
+  hr::after { background: white; }
+}
+
+/* PRINT BUTTON (화면 우상단) */
+.print-btn {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: var(--ink);
+  color: var(--bg);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.15s;
+}
+.print-btn:hover { background: var(--gold); }
+@media print { .print-btn { display: none; } }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">⌘P 인쇄</button>
+
+<aside class="toc">
+<div class="toc-title">목차</div>
+<a href="#5">수업 시작 5분 전</a>
+<a href="#90-5">90분 5단계 진행 (시차 배치)</a>
+<a href="#5_2">수업 후 5분</a>
+<a href="#_1">호출 시간 길어질 때 대처</a>
+<a href="#_2">절대 하지 않는 것</a>
+<a href="#50">케어 합계 5.0 초과 시</a>
+<a href="#1">단계 재평가 기준 (매월 1일 또는 학기 전환 시)</a>
+<a href="#_3">난이도별 교재 매트릭스 (요약)</a>
+</aside>
+
+<div class="page">
+  <header class="cover">
+    <div class="brand">과사람수학</div>
+    <h1>담임 90분 운영 매뉴얼</h1>
+    <div class="sub">코팅용 한 장</div>
+  </header>
+
+  <nav class="doc-nav">
+<a href="00_INDEX.html">00 INDEX</a>
+<a href="01_도입가이드.html">01 도입 가이드</a>
+<a href="03_시스템사용매뉴얼.html">03 시스템 사용 매뉴얼</a>
+<a href="04_담임_운영매뉴얼.html" class="active">04 담임 운영 매뉴얼</a>
+<a href="02_빠른참조카드.html">02 빠른 참조 카드 (인쇄용)</a>
+</nav>
+
+  <article>
+    <blockquote>
+<p>코팅해서 책상에 두세요.</p>
+</blockquote>
+<h2 id="5">수업 시작 5분 전</h2>
+<ol>
+<li><code>/diagnostics/prep/{class_id}</code> 열기</li>
+<li>5명 카드 인쇄 또는 ClassIn 화이트보드에 띄우기</li>
+<li>매쓰플랫에서 학생별 오늘 시트 5장 인쇄 (RCC 교재 매트릭스 참고)</li>
+<li>오르조 잔여 시간용 학습교재 미리 로드 (소단원 단위)</li>
+<li>카드와 시트를 학생 자리에 배치</li>
+</ol>
+<h2 id="90-5">90분 5단계 진행 (시차 배치)</h2>
+<h3 id="1-10">단계 ① — 리뷰 테스트 (수업 시작 즉시 10분)</h3>
+<p><strong>모든 학생 동시 시작.</strong> 전 회차 학습 내용 복습 테스트.</p>
+<ul>
+<li>학생: 풀이 → 본인 채점 → 오답 정리</li>
+<li>담임: 시간 관리, 부정행위 감독</li>
+<li>오답은 <strong>본인이 메모</strong>해뒀다가 자기 풀이 시간에 개별 질문</li>
+</ul>
+<blockquote>
+<p>이 단계가 빠지면 망각이 누적됩니다. 매 수업 무조건 첫 10분.</p>
+</blockquote>
+<h3 id="2-1030">단계 ② — 개념 설명 (시차 배치 10~30분 구간)</h3>
+<p>5분씩 어긋나게 학생 한 명씩 1:1 개념 설명.</p>
+<table>
+<thead>
+<tr>
+<th>시점</th>
+<th>학생</th>
+<th>담임 행동</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>+10분</td>
+<td>A에게</td>
+<td>5~10분 1:1 개념 설명 + 개념노트 작성 안내</td>
+</tr>
+<tr>
+<td>+15분</td>
+<td>B에게</td>
+<td>동일</td>
+</tr>
+<tr>
+<td>+20분</td>
+<td>C에게</td>
+<td>동일</td>
+</tr>
+<tr>
+<td>+25분</td>
+<td>D에게</td>
+<td>동일</td>
+</tr>
+<tr>
+<td>+30분</td>
+<td>E에게</td>
+<td>동일</td>
+</tr>
+</tbody>
+</table>
+<p><strong>개념 설명 룰:</strong>
+- 학생 시트의 "미니강의 키 포인트" 그대로 시작
+- 설명 후 학생이 직접 <strong>서술형 개념노트</strong>를 작성하게 함
+- 끝나면 "다 풀고 막히면 손 들어"</p>
+<h3 id="3-3070">단계 ③ — 자기 풀이 (개별 진입, 평균 30~70분)</h3>
+<p>학생마다 진입 시점이 다름. 두 단계로:</p>
+<pre><code>① 개념 확인 학습 (개념노트가 정확한지)
+        ↓
+   미완료 시 다음 단계로 못 감 → ②번 단계로 돌려보내기
+        ↓
+② 확인 연습문제 15~20문제
+        ↓
+   채점 + 1:1 피드백
+</code></pre>
+<p><strong>담임 행동:</strong>
+- 호출 들어온 순서대로 응대
+- 한 학생당 3분 이상 안 씀. 더 길어지면 "잠깐 다음 단계 가보고 안 되면 다시 부르자"
+- 호출 없으면 5분마다 한 바퀴 순회. 어깨 너머로 풀이만 확인
+- <strong>개입 금지</strong>: "어디서 막혔어?"만 물어보기. 답을 직접 알려주지 않음</p>
+<h3 id="4-70">단계 ④ — 확인 테스트 (개별 진입, 학생 시작+70분 시점)</h3>
+<p>학생 시계로 70분 시점에 시작. 7~10문항, 10분 제한.</p>
+<ul>
+<li>시트는 뒤집어 두고 신호와 함께 시작</li>
+<li>종료 후 즉시 채점</li>
+<li>α/β/γ 등급 매김</li>
+<li>1:1 피드백 5분 (오답 1~2문항 짚기)</li>
+</ul>
+<h3 id="5_1">단계 ⑤ — 오르조 (모든 빈 시간)</h3>
+<p>오르조는 본 수업 종료 후 잔여 시간뿐 아니라 <strong>수업 중 발생하는 모든 빈 틈</strong>을 메우는 도구입니다.</p>
+<table>
+<thead>
+<tr>
+<th>빈 틈 발생 시점</th>
+<th>누가</th>
+<th>대처</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>개념 설명 차례 대기 (학생 B~E)</td>
+<td>5~20분 빈 시간</td>
+<td>즉시 오르조</td>
+</tr>
+<tr>
+<td>자기 풀이 일찍 끝남</td>
+<td>임의 학생</td>
+<td>즉시 오르조</td>
+</tr>
+<tr>
+<td>본 수업 종료 후 (학생 A 등)</td>
+<td>잔여 5~10분</td>
+<td>즉시 오르조</td>
+</tr>
+</tbody>
+</table>
+<p><strong>룰:</strong>
+- 휴대폰·잡담 허용 X
+- 1분 이상 비면 즉시 오르조로 전환
+- 소단원 학습 교재 진행 (난이도 매트릭스 참고)
+- 진행 분량은 다음 수업 시작 시 점검</p>
+<h2 id="5_2">수업 후 5분</h2>
+<ol>
+<li>카드의 "수업 후 메모"란 채우기</li>
+<li><code>/diagnostics/entry</code>에서 확인 테스트 결과 입력 (5명, 5분 안에)</li>
+<li>결석 학생 표시 (보강 일정 잡기)</li>
+</ol>
+<h2 id="_1">호출 시간 길어질 때 대처</h2>
+<table>
+<thead>
+<tr>
+<th>상황</th>
+<th>대응</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>개념 자체를 모름</td>
+<td>개념노트로 돌아가 재설명. 다음 회차에 다시 미니강의로 다루자 메모</td>
+</tr>
+<tr>
+<td>한 문항 5분 이상 막힘</td>
+<td>같은 단원 더 쉬운 문항으로 우회</td>
+</tr>
+<tr>
+<td>계산 실수 반복</td>
+<td>시트 한 페이지 단위 계산만 풀게 → 채점 시 원인 태그 "계산"</td>
+</tr>
+<tr>
+<td>학생이 다 풀어버림</td>
+<td>즉시 오르조 학습교재로 전환</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">절대 하지 않는 것</h2>
+<ul>
+<li>리뷰 테스트 건너뛰기 — 첫 10분은 무조건 리뷰</li>
+<li>개념노트 미완성 상태로 연습문제 진행</li>
+<li>개념 설명을 15분 이상 늘리기</li>
+<li>한 학생에게 한 회차 3개 이상 단원</li>
+<li>확인 테스트 결과를 다음 날 입력</li>
+<li>학생 답을 직접 알려주기</li>
+<li>남는 시간에 휴대폰·잡담 허용</li>
+</ul>
+<h2 id="50">케어 합계 5.0 초과 시</h2>
+<p>반 등록 화면의 <code>care_weight</code> 합계가 5.0 넘으면 ● 과부하 표시.</p>
+<ul>
+<li>가장 자기주도 학생을 다른 시간대로 이동 (가능하면)</li>
+<li>또는 그 반 정원을 4명으로 일시 축소</li>
+<li>매월 1일 단계 재평가 회의에서 조정</li>
+</ul>
+<h2 id="1">단계 재평가 기준 (매월 1일 또는 학기 전환 시)</h2>
+<ul>
+<li>α 단원이 해당 학기 단원의 80% 이상 → 다음 단계로 승격 검토</li>
+<li>γ 단원이 3개 이상 누적 → 한 단계 내려서 복구 트랙</li>
+<li>망각 체크에서 이전 단원 70% 이하 → 단계 유지하되 복습 비중 증가</li>
+<li>교재 난이도(L1~L6) 매칭 재조정</li>
+</ul>
+<h2 id="_3">난이도별 교재 매트릭스 (요약)</h2>
+<table>
+<thead>
+<tr>
+<th>난이도</th>
+<th>RCC 교재 (개념·진도)</th>
+<th>오르조 학습교재</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1</td>
+<td>쎈 B</td>
+<td>베이직쎈</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>라이트쎈</td>
+<td>개념유형 라이트</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>쎈 (B단계)</td>
+<td>RPM</td>
+</tr>
+<tr>
+<td>L4</td>
+<td>바이블 유형 (ON)</td>
+<td>내신고쟁이</td>
+</tr>
+<tr>
+<td>L5</td>
+<td>쎈 (C단계)</td>
+<td>상위 학습교재 별도</td>
+</tr>
+<tr>
+<td>L6</td>
+<td>일품</td>
+<td>상위 학습교재 별도</td>
+</tr>
+</tbody>
+</table>
+<p>오르조 준비 교재: 중1·중2·중3 / 소단원별 20~25문제 + 소단원별 TEST 10문제</p>
+  </article>
+
+  <footer>
+    <span>과사람수학 · 동래센터</span>
+    <span class="gold">VER 2.0 · 2026</span>
+  </footer>
+</div>
+
+</body>
+</html>
