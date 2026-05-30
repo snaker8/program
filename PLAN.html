@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자사관 · 학생 내신 계획 관리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafafa; --surface:#ffffff; --surface-2:#f5f5f7;
+  --border:#e5e5ea; --border-strong:#d4d4d8;
+  --text:#0a0a0a; --text-2:#52525b; --text-3:#a1a1aa;
+  --accent:#6366f1; --accent-soft:#eef2ff; --accent-hover:#4f46e5;
+  --success:#10b981; --success-soft:#d1fae5;
+  --warn:#f59e0b; --warn-soft:#fef3c7;
+  --danger:#ef4444; --danger-soft:#fee2e2;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.04);
+  --shadow:0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.04);
+  --radius:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+  font-family:'Pretendard','Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;letter-spacing:-0.01em}
+.container{max-width:1440px;margin:0 auto;padding:24px 32px 80px}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;box-shadow:var(--shadow)}
+.brand h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-0.02em}
+.brand .sub{color:var(--text-3);font-size:13px;font-weight:500;margin-top:2px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{font-family:inherit;font-size:13px;font-weight:500;border-radius:8px;padding:8px 14px;cursor:pointer;
+  border:1px solid var(--border-strong);background:var(--surface);color:var(--text);transition:all .15s ease;
+  display:inline-flex;align-items:center;gap:6px}
+button:hover{background:var(--surface-2);border-color:var(--text-3)}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+button.ghost{background:transparent;border-color:transparent}
+button.ghost:hover{background:var(--surface-2)}
+button.danger{color:var(--danger);border-color:var(--border)}
+button.danger:hover{background:var(--danger-soft);border-color:var(--danger)}
+
+/* 시즌 바 */
+.seasonbar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:var(--shadow-sm)}
+.seasonbar .label{font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+.seasonbar select{font-family:inherit;font-size:14px;font-weight:600;background:var(--surface-2);color:var(--text);
+  border:1px solid var(--border);border-radius:8px;padding:6px 10px;outline:none;cursor:pointer}
+.seasonbar select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.seasonbar .spacer{flex:1}
+.seasonbar .now{padding:5px 10px;background:var(--accent-soft);color:var(--accent);border-radius:6px;font-weight:600;font-size:12px}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:24px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow-sm)}
+.stat .l{font-size:11px;color:var(--text-3);font-weight:500;text-transform:uppercase;letter-spacing:0.01em}
+.stat .v{font-size:26px;font-weight:700;margin-top:4px;letter-spacing:-0.02em;font-feature-settings:"tnum"}
+.stat .d{font-size:11px;color:var(--text-2);margin-top:2px}
+.stat.accent .v{color:var(--accent)}
+
+.tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface-2);padding:4px;border-radius:10px;width:fit-content;flex-wrap:wrap}
+.tab{padding:8px 14px;cursor:pointer;color:var(--text-2);border-radius:7px;font-size:13px;font-weight:500;transition:all .15s}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--surface);color:var(--text);font-weight:600;box-shadow:var(--shadow-sm)}
+.view{display:none}.view.active{display:block}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+.toolbar input,.toolbar select{font-family:inherit;font-size:13px;background:var(--surface);color:var(--text);
+  border:1px solid var(--border-strong);border-radius:8px;padding:8px 12px;outline:none}
+.toolbar input:focus,.toolbar select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.toolbar input{min-width:220px}
+.toolbar .spacer{flex:1}
+.toolbar .hint{color:var(--text-3);font-size:12px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;
+  transition:all .18s ease;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.scard:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--accent)}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);
+  transform:scaleX(0);transform-origin:left;transition:transform .2s}
+.scard:hover::before{transform:scaleX(1)}
+.scard.archived{opacity:.65}
+.scard.archived::before{background:var(--text-3)}
+.scard .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:14px}
+.scard .name{font-size:16px;font-weight:700;letter-spacing:-0.01em}
+.scard .school{color:var(--text-2);font-size:12px;margin-top:3px;font-weight:500}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:0.02em}
+.badge.g2{background:#d1fae5;color:#065f46}
+.badge.g3{background:#fed7aa;color:#9a3412}
+.badge.linked{background:var(--accent-soft);color:var(--accent);margin-left:6px}
+.badge.grad{background:#e5e7eb;color:#52525b;margin-left:6px}
+.dday-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+.dday-row .label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
+.dday-row .v{font-size:24px;font-weight:800;letter-spacing:-0.02em;font-feature-settings:"tnum"}
+.dday-row.good .v{color:var(--success)}
+.dday-row.warn .v{color:var(--warn)}
+.dday-row.bad .v{color:var(--danger)}
+.dday-row.none .v{color:var(--text-3);font-size:14px;font-weight:600}
+.progress-wrap{display:flex;align-items:center;gap:10px}
+.progress{flex:1;height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.progress > div{height:100%;background:linear-gradient(90deg,var(--accent),#8b5cf6);border-radius:99px;transition:width .3s}
+.progress-meta{font-size:11px;color:var(--text-3);font-weight:600;font-feature-settings:"tnum"}
+.diag-mini{display:flex;gap:4px;margin-top:8px}
+.diag-mini .pill{flex:1;text-align:center;padding:3px 0;border-radius:5px;font-size:10px;font-weight:700;font-feature-settings:"tnum"}
+.diag-mini .pill.ok{background:var(--success-soft);color:#065f46}
+.diag-mini .pill.mid{background:var(--warn-soft);color:#92400e}
+.diag-mini .pill.bad{background:var(--danger-soft);color:#991b1b}
+.diag-mini .pill.none{background:var(--surface-2);color:var(--text-3)}
+
+.schools{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.sch-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm)}
+.sch-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.sch-card .sname{font-weight:700;font-size:15px;letter-spacing:-0.01em}
+.sch-card .scount{color:var(--text-3);font-size:12px;margin-top:3px;font-weight:500}
+.dday-chip{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:0.02em}
+.dday-chip.good{background:var(--success-soft);color:#065f46}
+.dday-chip.warn{background:var(--warn-soft);color:#92400e}
+.dday-chip.bad{background:var(--danger-soft);color:#991b1b}
+.dday-chip.none{background:var(--surface-2);color:var(--text-3)}
+.field{margin-top:10px}
+.field label{display:block;font-size:11px;color:var(--text-3);font-weight:600;letter-spacing:0.02em;text-transform:uppercase;margin-bottom:5px}
+.field input{width:100%;background:var(--surface-2);color:var(--text);border:1px solid transparent;
+  border-radius:7px;padding:8px 10px;font-size:13px;font-family:inherit;outline:none;font-feature-settings:"tnum"}
+.field input:focus{background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,15,20,.5);z-index:99;
+  justify-content:center;align-items:flex-start;overflow-y:auto;padding:40px 16px;backdrop-filter:blur(4px)}
+.modal-bg.show{display:flex}
+.modal{background:var(--surface);border-radius:16px;max-width:920px;width:100%;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:slideUp .25s ease}
+.modal.sm{max-width:520px}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mhead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:20px;margin-bottom:24px;border-bottom:1px solid var(--border)}
+.mhead h2{margin:0;font-size:22px;font-weight:700;letter-spacing:-0.02em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mhead .meta{color:var(--text-2);font-size:13px;margin-top:6px;font-weight:500}
+.mhead .mactions{display:flex;gap:6px}
+.close{padding:6px 10px;font-size:18px;color:var(--text-3)}
+
+.msummary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.msummary > div{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.msummary .k{font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+.msummary .v{font-size:22px;font-weight:700;margin-top:4px;letter-spacing:-0.02em;font-feature-settings:"tnum"}
+
+.subtabs{display:flex;gap:2px;margin-bottom:16px;background:var(--surface-2);padding:4px;border-radius:10px;width:fit-content;max-width:100%;overflow-x:auto}
+.subtab{padding:6px 12px;cursor:pointer;color:var(--text-2);border-radius:7px;font-size:12px;font-weight:500;white-space:nowrap}
+.subtab.active{background:var(--surface);color:var(--text);font-weight:600;box-shadow:var(--shadow-sm)}
+.subview{display:none}.subview.active{display:block}
+
+.section{margin-top:20px}
+.section h3{margin:0 0 12px;font-size:13px;color:var(--text);font-weight:700;display:flex;align-items:center;gap:8px;letter-spacing:0.02em}
+.section h3 .dot{width:6px;height:6px;border-radius:99px;background:var(--accent)}
+
+table{width:100%;border-collapse:collapse;font-size:13px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+table th,table td{border-bottom:1px solid var(--border);padding:10px 12px;text-align:left}
+table tr:last-child td{border-bottom:none}
+table th{background:var(--surface-2);color:var(--text-3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.04em}
+table input[type=text],table input[type=number],table input[type=date]{background:transparent;color:var(--text);border:1px solid transparent;
+  border-radius:6px;padding:5px 8px;font-size:13px;width:100%;font-family:inherit;outline:none;font-feature-settings:"tnum"}
+table input:focus{background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+table input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+
+.weekplan{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.weekrow{display:grid;grid-template-columns:90px 1fr 100px 110px 50px;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+.weekrow:last-child{border-bottom:none}
+.weekrow.head{background:var(--surface-2);color:var(--text-3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+.weekrow .week-tag{font-weight:700;color:var(--accent);font-size:12px;font-feature-settings:"tnum"}
+.weekrow .range{font-size:12px;color:var(--text-3);font-feature-settings:"tnum"}
+.weekrow input[type=text],.weekrow input[type=number]{background:transparent;border:1px solid transparent;border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;outline:none;width:100%}
+.weekrow input:focus{background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+
+textarea{width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:12px 14px;min-height:90px;font-family:inherit;font-size:13px;outline:none;resize:vertical}
+textarea:focus{background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+
+.empty{padding:40px 20px;text-align:center;color:var(--text-3);font-size:14px;background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--radius);grid-column:1/-1}
+.add-btn{background:transparent;color:var(--accent);border:1px dashed var(--border-strong);border-radius:8px;padding:8px 14px;font-weight:500;font-size:13px;cursor:pointer;font-family:inherit}
+.add-btn:hover{border-color:var(--accent);background:var(--accent-soft)}
+
+.diag-panel{margin-top:12px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px}
+.diag-panel .ph{font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px}
+.diag-panel .stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.diag-panel .stat3 .k{font-size:11px;color:var(--text-3)}
+.diag-panel .stat3 .v{font-size:18px;font-weight:700;font-feature-settings:"tnum"}
+.diag-panel .verdict{font-size:13px;color:var(--text);line-height:1.5}
+
+/* SVG 라인차트 */
+.chart{width:100%;height:240px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px}
+.chart svg{width:100%;height:100%;display:block}
+.chart-legend{display:flex;gap:14px;font-size:12px;color:var(--text-2);margin-top:8px;flex-wrap:wrap}
+.chart-legend .lg{display:flex;align-items:center;gap:6px}
+.chart-legend .sw{width:10px;height:10px;border-radius:2px}
+
+/* 모달 폼 */
+.formrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.formrow.full{grid-template-columns:1fr}
+.formrow label{display:block;font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.formrow input,.formrow select{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:7px;padding:8px 10px;font-size:13px;font-family:inherit;outline:none}
+.formrow input:focus,.formrow select:focus{background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.formrow .check{display:flex;align-items:center;gap:8px;font-size:13px}
+.formrow .check input{width:auto;margin:0}
+
+@media print{body{background:#fff}.container{max-width:none;padding:20px}.no-print{display:none !important}.modal-bg{position:static;background:none;padding:0;display:block !important;backdrop-filter:none}.modal{box-shadow:none;max-width:none}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="brand">
+    <div class="logo">자</div>
+    <div>
+      <h1>자사관 · 학생 내신 계획</h1>
+      <div class="sub">시즌별 누적 관리 · 매쓰사이뱅크 연동 · 성장 추이 분석</div>
+    </div>
+  </div>
+  <div class="actions no-print">
+    <button id="msbBtn">⚙ 매쓰사이뱅크</button>
+    <button id="autoMapBtn">🔗 자동 매핑</button>
+    <button id="syncAllBtn" class="primary">↓ 동기화</button>
+    <button id="exportBtn">백업</button>
+    <button id="importBtn">불러오기</button>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+    <button class="danger" id="resetBtn">초기화</button>
+  </div>
+</header>
+
+<!-- 시즌 셀렉터 -->
+<div class="seasonbar no-print">
+  <span class="label">📅 시즌</span>
+  <select id="selYear"></select>
+  <select id="selSem">
+    <option value="1">1학기</option>
+    <option value="2">2학기</option>
+  </select>
+  <select id="selType">
+    <option value="중간">중간고사</option>
+    <option value="기말">기말고사</option>
+  </select>
+  <span class="now" id="seasonNow"></span>
+  <span class="spacer"></span>
+  <button id="newSeasonBtn" class="primary">＋ 새 시즌</button>
+  <button id="copySeasonBtn">📋 직전 시즌 복제</button>
+  <button id="delSeasonBtn" class="danger">시즌 삭제</button>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="tabs no-print">
+  <div class="tab active" data-view="students">학생별 계획</div>
+  <div class="tab" data-view="schools">학교별 시험일</div>
+  <div class="tab" data-view="report">📊 시즌 비교</div>
+  <div class="tab" data-view="archive">🎓 졸업생 아카이브</div>
+</div>
+
+<div class="view active" id="view-students">
+  <div class="toolbar no-print">
+    <input id="search" placeholder="이름 또는 학교 검색">
+    <select id="filterSchool"><option value="">전체 학교</option></select>
+    <select id="filterGrade">
+      <option value="">전체 학년</option><option value="중2">중2</option><option value="중3">중3</option>
+    </select>
+    <select id="sortBy">
+      <option value="dday">D-day 임박순</option>
+      <option value="name">이름순</option>
+      <option value="school">학교순</option>
+      <option value="grade">학년순</option>
+      <option value="score">진단점수 낮은순</option>
+    </select>
+    <div class="spacer"></div>
+    <button id="addStudentBtn">＋ 학생 추가</button>
+    <span class="hint" id="countHint"></span>
+  </div>
+  <div class="grid" id="studentGrid"></div>
+</div>
+
+<div class="view" id="view-schools">
+  <div class="toolbar no-print">
+    <button class="primary" id="bulkSetBtn">전체 학교 일괄 설정</button>
+    <span class="hint">학교별 시험일을 수정하면 해당 학교 학생의 D-day가 즉시 갱신됩니다</span>
+  </div>
+  <div class="schools" id="schoolGrid"></div>
+</div>
+
+<div class="view" id="view-report">
+  <div id="reportBody"></div>
+</div>
+
+<div class="view" id="view-archive">
+  <div class="toolbar no-print">
+    <input id="archSearch" placeholder="졸업생 검색">
+    <span class="hint">졸업/탈퇴 처리된 학생들의 시즌별 데이터를 조회할 수 있습니다</span>
+  </div>
+  <div class="grid" id="archiveGrid"></div>
+</div>
+
+</div>
+
+<div class="modal-bg" id="modal"><div class="modal" id="modalBody"></div></div>
+<div class="modal-bg" id="modal2"><div class="modal sm" id="modalBody2"></div></div>
+
+<script>
+const RAW = {"students": [{"name": "권예하", "gender": "M", "school": "유락여자중학교", "grade": "중3"}, {"name": "김가민", "gender": "M", "school": "거제여자중학교", "grade": "중3"}, {"name": "김가이", "gender": "M", "school": "부곡여자중학교", "grade": "중3"}, {"name": "김경록", "gender": "M", "school": "부산중학교", "grade": "중3"}, {"name": "김경민", "gender": "M", "school": "반안중학교", "grade": "중3"}, {"name": "김도영", "gender": "M", "school": "사직여자중학교", "grade": "중2"}, {"name": "김도현", "gender": "M", "school": "부곡중학교", "grade": "중2"}, {"name": "김려원", "gender": "M", "school": "거제여자중학교", "grade": "중2"}, {"name": "김소윤", "gender": "M", "school": "유락여자중학교", "grade": "중3"}, {"name": "김아윤", "gender": "M", "school": "동래여자중학교", "grade": "중3"}, {"name": "남궁윤", "gender": "M", "school": "부곡중학교", "grade": "중2"}, {"name": "문서영", "gender": "M", "school": "사직중학교", "grade": "중2"}, {"name": "민채원", "gender": "M", "school": "동평여자중학교", "grade": "중3"}, {"name": "박소윤", "gender": "M", "school": "유락여자중학교", "grade": "중2"}, {"name": "서여원", "gender": "M", "school": "명진중학교", "grade": "중3"}, {"name": "서정윤", "gender": "M", "school": "사직여자중학교", "grade": "중2"}, {"name": "성준상", "gender": "M", "school": "금명중학교", "grade": "중3"}, {"name": "성채은", "gender": "M", "school": "동래여자중학교", "grade": "중3"}, {"name": "손서영", "gender": "M", "school": "항도중학교", "grade": "중3"}, {"name": "송지유", "gender": "M", "school": "학산여자중학교", "grade": "중3"}, {"name": "신경욱", "gender": "M", "school": "내성중학교", "grade": "중3"}, {"name": "심지후", "gender": "M", "school": "해강중학교", "grade": "중2"}, {"name": "오도현", "gender": "M", "school": "사직중학교", "grade": "중3"}, {"name": "오하음", "gender": "M", "school": "백양중학교", "grade": "중2"}, {"name": "윤효재", "gender": "M", "school": "사직중학교", "grade": "중2"}, {"name": "이담윤", "gender": "M", "school": "화명중학교", "grade": "중3"}, {"name": "이동완", "gender": "M", "school": "사직중학교", "grade": "중3"}, {"name": "이범준", "gender": "M", "school": "사직중학교", "grade": "중3"}, {"name": "이서진", "gender": "M", "school": "장전중학교", "grade": "중2"}, {"name": "이세림", "gender": "M", "school": "학산여자중학교", "grade": "중3"}, {"name": "이원준", "gender": "M", "school": "동양중학교", "grade": "중3"}, {"name": "이유주", "gender": "F", "school": "학산여자중학교", "grade": "중3"}, {"name": "이윤빈", "gender": "F", "school": "사직여자중학교", "grade": "중3"}, {"name": "이지안", "gender": "M", "school": "거제여자중학교", "grade": "중2"}, {"name": "이지완", "gender": "M", "school": "동해중학교", "grade": "중3"}, {"name": "이하은", "gender": "M", "school": "유락여자중학교", "grade": "중3"}, {"name": "이현석", "gender": "M", "school": "동해중학교", "grade": "중3"}, {"name": "전서연", "gender": "F", "school": "초연중학교", "grade": "중3"}, {"name": "전현우", "gender": "M", "school": "동래중학교", "grade": "중3"}, {"name": "정승현", "gender": "M", "school": "인지중학교", "grade": "중3"}, {"name": "정정훈", "gender": "M", "school": "부산중학교", "grade": "중3"}, {"name": "천재원", "gender": "M", "school": "여명중학교", "grade": "중2"}, {"name": "최시후", "gender": "M", "school": "동해중학교", "grade": "중3"}, {"name": "최정우", "gender": "M", "school": "동의중학교", "grade": "중3"}, {"name": "허다경", "gender": "M", "school": "백양중학교", "grade": "중3"}], "schools": ["거제여자중학교", "금명중학교", "내성중학교", "동래여자중학교", "동래중학교", "동양중학교", "동의중학교", "동평여자중학교", "동해중학교", "명진중학교", "반안중학교", "백양중학교", "부곡여자중학교", "부곡중학교", "부산중학교", "사직여자중학교", "사직중학교", "여명중학교", "유락여자중학교", "인지중학교", "장전중학교", "초연중학교", "학산여자중학교", "항도중학교", "해강중학교", "화명중학교"], "default_exam": {"거제여자중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "금명중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "내성중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "동래여자중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "동래중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "동양중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "동의중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "동평여자중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "동해중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "명진중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "반안중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "백양중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "부곡여자중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "부곡중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "부산중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "사직여자중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "사직중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "여명중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "유락여자중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "인지중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "장전중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "초연중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "학산여자중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "항도중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "해강중학교": {"start": "2026-06-30", "end": "2026-07-02"}, "화명중학교": {"start": "2026-06-30", "end": "2026-07-02"}}, "default_units": {"중2": ["유리수와 순환소수", "단항식·다항식의 계산", "일차부등식과 연립일차방정식", "일차함수와 그래프", "일차함수와 일차방정식의 관계"], "중3": ["제곱근과 실수", "다항식의 곱셈과 인수분해", "이차방정식의 풀이와 활용", "이차함수와 그래프"]}};
+const KEY = 'jasagwan_plan_v5';
+const MSB_CFG_KEY = 'jasagwan_msb_cfg';
+const EXAM_LABELS = { mockFinal1:'미리보는 기말 1회', mockFinal2:'미리보는 기말 2회', mock1:'모의고사 1회', mock2:'모의고사 2회' };
+const EXAM_ORDER = ['mockFinal1','mockFinal2','mock1','mock2'];
+const CURRENT_YEAR = 2026;
+const DEFAULT_UNITS = RAW.default_units;
+
+// ─── store 구조 ───
+// { schemaVersion:5,
+//   meta: { activeSeason, studentBase: { key:{msbId,joinedAt,archived,gradeOverride} } },
+//   seasons: { id: { label, year, sem, type, schoolExams:{}, students:{key:{units,progress,weekly,diagnostics,exams,memo}} } }
+// }
+
+let store = loadStore();
+ensureSeason(store.meta.activeSeason);
+let modalEnc = null;
+let modalTab = 'plan';
+
+function loadStore(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){
+      const s = JSON.parse(raw);
+      if(s.schemaVersion === 5) return s;
+    }
+  }catch(e){}
+  // v4 → v5 마이그레이션 시도
+  let v4 = null;
+  try{ const r = localStorage.getItem('jasagwan_plan_v4'); if(r) v4 = JSON.parse(r); }catch(e){}
+  const seasonId = '2026-1-기말';
+  const newStore = {
+    schemaVersion: 5,
+    meta: {
+      activeSeason: seasonId,
+      studentBase: {}
+    },
+    seasons: {}
+  };
+  // studentBase 시드: RAW.students + v4 데이터 병합
+  for(const s of RAW.students){
+    const key = s.name + '|' + s.school;
+    newStore.meta.studentBase[key] = {
+      name: s.name, school: s.school, grade: s.grade,
+      msbId: '', joinedAt: '2025-03', archived: false, gradeOverride: null
+    };
+  }
+  if(v4){
+    for(const [key, st] of Object.entries(v4.students || {})){
+      if(!newStore.meta.studentBase[key]){
+        // v4에는 있는데 RAW에는 없는 학생 (수동 추가된 적 있음) — 일단 추가 시도
+        const [name, school] = key.split('|');
+        newStore.meta.studentBase[key] = { name, school, grade: '중3', msbId: st.msbId || '', joinedAt:'', archived:false, gradeOverride:null };
+      } else if(st.msbId){
+        newStore.meta.studentBase[key].msbId = st.msbId;
+      }
+    }
+  }
+  // 첫 시즌 생성
+  newStore.seasons[seasonId] = makeSeason(2026, 1, '기말', newStore, v4);
+  return newStore;
+}
+
+function makeSeason(year, sem, type, refStore, v4){
+  const id = year + '-' + sem + '-' + type;
+  const sched = (sem === 1 && type === '기말') ? {start:'2026-06-30', end:'2026-07-02'}
+              : (sem === 1 && type === '중간') ? {start:'2026-04-28', end:'2026-04-30'}
+              : (sem === 2 && type === '중간') ? {start:'2026-09-29', end:'2026-10-01'}
+              : {start:'2026-12-15', end:'2026-12-17'};
+  const exams = {};
+  for(const sch of RAW.schools) exams[sch] = {...sched};
+  const students = {};
+  for(const [key, base] of Object.entries(refStore.meta.studentBase)){
+    if(base.archived) continue;
+    const g = base.gradeOverride || base.grade;
+    students[key] = {
+      units: DEFAULT_UNITS[g] ? [...DEFAULT_UNITS[g]] : [],
+      progress: {}, weekly: [], memo: '', diagnostics: [], exams: {}
+    };
+  }
+  // v4 데이터 첫 시즌에만 이관
+  if(v4 && id === '2026-1-기말'){
+    if(v4.exams){ for(const [sch, e] of Object.entries(v4.exams)){ if(exams[sch] && e.start) exams[sch] = e; } }
+    for(const [key, st] of Object.entries(v4.students || {})){
+      if(students[key]){
+        if(st.units) students[key].units = st.units;
+        if(st.progress) students[key].progress = st.progress;
+        if(st.weekly) students[key].weekly = st.weekly;
+        if(st.memo) students[key].memo = st.memo;
+        if(st.diagnostics) students[key].diagnostics = st.diagnostics;
+        if(st.exams) students[key].exams = st.exams;
+      }
+    }
+  }
+  return { id, label: year + '학년도 ' + sem + '학기 ' + type, year, sem, type, schoolExams: exams, students };
+}
+
+function ensureSeason(id){
+  if(!store.seasons[id]){
+    const [y, sem, type] = id.split('-');
+    store.seasons[id] = makeSeason(parseInt(y), parseInt(sem), type, store, null);
+  }
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(store)); render(); }
+function silent(){ localStorage.setItem(KEY, JSON.stringify(store)); }
+
+function curSeason(){ return store.seasons[store.meta.activeSeason]; }
+function activeStudents(){
+  const list = [];
+  for(const [key, base] of Object.entries(store.meta.studentBase)){
+    if(base.archived) continue;
+    list.push({key, ...base});
+  }
+  return list;
+}
+function activeSchools(){
+  const set = new Set();
+  for(const s of activeStudents()) set.add(s.school);
+  return [...set].sort();
+}
+
+function daysBetween(a,b){ return Math.floor((b - a) / 86400000); }
+function parseDate(s){ return s ? new Date(s + 'T00:00:00') : null; }
+function ddayOf(school){
+  const ex = curSeason().schoolExams[school]; if(!ex || !ex.start) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return daysBetween(today, parseDate(ex.start));
+}
+function ddayClass(d){
+  if(d === null || d < 0) return 'none';
+  if(d <= 7) return 'bad';
+  if(d <= 21) return 'warn';
+  return 'good';
+}
+function ddayLabel(d){
+  if(d === null) return '미정';
+  if(d === 0) return 'D-day';
+  if(d < 0) return 'D+' + (-d);
+  return 'D-' + d;
+}
+
+function diagAvg(diags, k){
+  if(!diags) return null;
+  const arr = diags.map(d => d[k]).filter(v => v !== '' && v != null).map(Number);
+  return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null;
+}
+function diagOverallAvg(diags){
+  if(!diags || !diags.length) return null;
+  const all = [];
+  for(const d of diags){ for(const k of ['A','B','C']){ if(d[k] !== '' && d[k] != null) all.push(+d[k]); } }
+  return all.length ? Math.round(all.reduce((a,b)=>a+b,0)/all.length) : null;
+}
+function scoreCls(v, threshold){
+  if(v === null) return 'none';
+  if(v >= threshold) return 'ok';
+  if(v >= threshold - 15) return 'mid';
+  return 'bad';
+}
+
+// ───────── 시즌 셀렉터 ─────────
+function fillSeasonSelects(){
+  const years = new Set([CURRENT_YEAR]);
+  for(const id of Object.keys(store.seasons)){ years.add(parseInt(id.split('-')[0])); }
+  const yList = [...years].sort((a,b) => b - a);
+  document.getElementById('selYear').innerHTML = yList.map(y => '<option value="' + y + '">' + y + '학년도</option>').join('');
+  const [y, sem, type] = store.meta.activeSeason.split('-');
+  document.getElementById('selYear').value = y;
+  document.getElementById('selSem').value = sem;
+  document.getElementById('selType').value = type;
+  document.getElementById('seasonNow').textContent = curSeason().label;
+}
+function switchSeason(){
+  const y = document.getElementById('selYear').value;
+  const sem = document.getElementById('selSem').value;
+  const type = document.getElementById('selType').value;
+  const id = y + '-' + sem + '-' + type;
+  store.meta.activeSeason = id;
+  ensureSeason(id);
+  save();
+}
+
+// ───────── 렌더링 ─────────
+function renderStats(){
+  const active = activeStudents();
+  const schools = activeSchools();
+  const total = active.length;
+  const ex = curSeason().schoolExams;
+  const set = schools.filter(sch => ex[sch] && ex[sch].start).length;
+  const upcoming = active.filter(s => { const d = ddayOf(s.school); return d !== null && d >= 0 && d <= 30; }).length;
+  const linked = active.filter(s => s.msbId).length;
+  document.getElementById('stats').innerHTML =
+    '<div class="stat"><div class="l">현재 시즌</div><div class="v" style="font-size:18px;color:var(--accent)">' + curSeason().label + '</div></div>'
+    + '<div class="stat"><div class="l">활성 학생</div><div class="v">' + total + '</div><div class="d">관리 중</div></div>'
+    + '<div class="stat"><div class="l">소속 학교</div><div class="v">' + schools.length + '</div><div class="d">개교</div></div>'
+    + '<div class="stat"><div class="l">시험일 설정</div><div class="v">' + set + '<span style="font-size:14px;color:var(--text-3)">/' + schools.length + '</span></div></div>'
+    + '<div class="stat"><div class="l">MSB 연동</div><div class="v">' + linked + '<span style="font-size:14px;color:var(--text-3)">/' + total + '</span></div></div>'
+    + '<div class="stat accent"><div class="l">D-30 이내</div><div class="v">' + upcoming + '</div><div class="d">집중 관리</div></div>';
+}
+
+function renderStudents(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const fs = document.getElementById('filterSchool').value;
+  const fg = document.getElementById('filterGrade').value;
+  const sb = document.getElementById('sortBy').value;
+  const season = curSeason();
+  let list = activeStudents().filter(s => {
+    const g = s.gradeOverride || s.grade;
+    if(q && !(s.name.toLowerCase().includes(q) || s.school.toLowerCase().includes(q))) return false;
+    if(fs && s.school !== fs) return false;
+    if(fg && g !== fg) return false;
+    return true;
+  });
+  list.forEach(s => {
+    s._dday = ddayOf(s.school);
+    const st = season.students[s.key];
+    s._avg = diagOverallAvg(st && st.diagnostics);
+  });
+  if(sb === 'dday') list.sort((a,b) => { const da = a._dday === null || a._dday < 0 ? 9999 : a._dday; const db = b._dday === null || b._dday < 0 ? 9999 : b._dday; return da - db; });
+  else if(sb === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
+  else if(sb === 'school') list.sort((a,b) => a.school.localeCompare(b.school) || a.name.localeCompare(b.name));
+  else if(sb === 'grade') list.sort((a,b) => (a.gradeOverride||a.grade).localeCompare(b.gradeOverride||b.grade) || a.name.localeCompare(b.name));
+  else if(sb === 'score') list.sort((a,b) => (a._avg === null ? 999 : a._avg) - (b._avg === null ? 999 : b._avg));
+
+  document.getElementById('countHint').textContent = list.length + '명 표시';
+  const grid = document.getElementById('studentGrid');
+  if(list.length === 0){ grid.innerHTML = '<div class="empty">조건에 맞는 학생이 없습니다</div>'; return; }
+  grid.innerHTML = list.map(s => {
+    const st = season.students[s.key] || {progress:{}, units:[], diagnostics:[]};
+    const units = st.units || [];
+    const avg = units.length ? Math.round(units.reduce((a,u) => a + (st.progress[u] || 0), 0) / units.length) : 0;
+    const d = s._dday;
+    const g = s.gradeOverride || s.grade;
+    const gcls = g === '중2' ? 'g2' : 'g3';
+    const aA = diagAvg(st.diagnostics, 'A'), aB = diagAvg(st.diagnostics, 'B'), aC = diagAvg(st.diagnostics, 'C');
+    const linked = s.msbId ? '<span class="badge linked">MSB</span>' : '';
+    const pill = (label, v, threshold) => '<div class="pill ' + scoreCls(v, threshold) + '">' + label + ' ' + (v === null ? '–' : v) + '</div>';
+    return '<div class="scard" onclick="openStudent(\'' + encodeURIComponent(s.key) + '\')">'
+      + '<div class="top"><div><div class="name">' + s.name + linked + '</div><div class="school">' + s.school + '</div></div>'
+      + '<span class="badge ' + gcls + '">' + g + '</span></div>'
+      + '<div class="dday-row ' + ddayClass(d) + '"><div><div class="label">시험까지</div></div><div class="v">' + ddayLabel(d) + '</div></div>'
+      + '<div class="progress-wrap"><div class="progress"><div style="width:' + avg + '%"></div></div><span class="progress-meta">' + avg + '%</span></div>'
+      + '<div class="diag-mini">' + pill('A', aA, 60) + pill('B', aB, 70) + pill('C', aC, 80) + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderSchools(){
+  const schools = activeSchools();
+  document.getElementById('schoolGrid').innerHTML = schools.map(sch => {
+    const ex = curSeason().schoolExams[sch] || {start:'',end:''};
+    const cnt = activeStudents().filter(s => s.school === sch).length;
+    const d = ddayOf(sch);
+    const sQ = sch.replace(/'/g, "\\'");
+    return '<div class="sch-card"><div class="sch-head"><div><div class="sname">' + sch + '</div><div class="scount">학생 ' + cnt + '명</div></div>'
+      + '<span class="dday-chip ' + ddayClass(d) + '">' + ddayLabel(d) + '</span></div>'
+      + '<div class="field"><label>시험 시작일</label><input type="date" value="' + (ex.start||'') + '" onchange="setExam(\'' + sQ + '\', \'start\', this.value)"></div>'
+      + '<div class="field"><label>시험 종료일</label><input type="date" value="' + (ex.end||'') + '" onchange="setExam(\'' + sQ + '\', \'end\', this.value)"></div>'
+      + '</div>';
+  }).join('') || '<div class="empty">학교 없음</div>';
+}
+
+window.setExam = function(sch, k, val){
+  const cs = curSeason();
+  if(!cs.schoolExams[sch]) cs.schoolExams[sch] = {start:'',end:''};
+  cs.schoolExams[sch][k] = val;
+  save();
+};
+
+// ───────── 졸업생 아카이브 ─────────
+function renderArchive(){
+  const q = document.getElementById('archSearch').value.trim().toLowerCase();
+  const list = Object.entries(store.meta.studentBase).filter(([k,b]) => b.archived).map(([k,b]) => ({key:k, ...b}));
+  const filtered = list.filter(s => !q || s.name.toLowerCase().includes(q) || s.school.toLowerCase().includes(q));
+  const grid = document.getElementById('archiveGrid');
+  if(filtered.length === 0){ grid.innerHTML = '<div class="empty">졸업/탈퇴 학생 없음</div>'; return; }
+  grid.innerHTML = filtered.map(s => {
+    const seasons = Object.keys(store.seasons).filter(sid => store.seasons[sid].students[s.key]).length;
+    return '<div class="scard archived" onclick="openStudent(\'' + encodeURIComponent(s.key) + '\')">'
+      + '<div class="top"><div><div class="name">' + s.name + '<span class="badge grad">졸업</span></div><div class="school">' + s.school + '</div></div></div>'
+      + '<div style="font-size:13px;color:var(--text-2);margin-top:8px">관리 시즌 ' + seasons + '개</div>'
+      + '<button class="add-btn" style="margin-top:10px" onclick="event.stopPropagation();unarchive(\'' + encodeURIComponent(s.key) + '\')">↩ 복귀</button>'
+      + '</div>';
+  }).join('');
+}
+window.unarchive = function(encKey){
+  const key = decodeURIComponent(encKey);
+  if(!confirm(store.meta.studentBase[key].name + ' 학생을 현재 시즌으로 복귀시킬까요?')) return;
+  store.meta.studentBase[key].archived = false;
+  // 현재 시즌에 students 엔트리 없으면 생성
+  const cs = curSeason();
+  if(!cs.students[key]){
+    const b = store.meta.studentBase[key];
+    const g = b.gradeOverride || b.grade;
+    cs.students[key] = { units: DEFAULT_UNITS[g] ? [...DEFAULT_UNITS[g]] : [], progress:{}, weekly:[], memo:'', diagnostics:[], exams:{} };
+  }
+  save();
+};
+
+// ───────── 시즌 비교 리포트 ─────────
+function renderReport(){
+  const seasonIds = Object.keys(store.seasons).sort();
+  if(seasonIds.length === 0){ document.getElementById('reportBody').innerHTML = '<div class="empty">시즌 데이터 없음</div>'; return; }
+  // 시즌별 전체 평균
+  const rows = seasonIds.map(sid => {
+    const sn = store.seasons[sid];
+    const allDiag = [];
+    const allExam = [];
+    for(const st of Object.values(sn.students)){
+      for(const d of (st.diagnostics||[])){ for(const k of ['A','B','C']){ if(d[k] != null && d[k] !== '') allDiag.push(+d[k]); } }
+      for(const k of EXAM_ORDER){ if(st.exams && st.exams[k] != null && st.exams[k] !== '') allExam.push(+st.exams[k]); }
+    }
+    const dAvg = allDiag.length ? Math.round(allDiag.reduce((a,b)=>a+b,0)/allDiag.length) : null;
+    const eAvg = allExam.length ? Math.round(allExam.reduce((a,b)=>a+b,0)/allExam.length) : null;
+    return {sid, label: sn.label, dAvg, eAvg, students: Object.keys(sn.students).length};
+  });
+  // 학교별 평균 (현재 시즌만)
+  const cs = curSeason();
+  const schoolStats = {};
+  for(const [key, st] of Object.entries(cs.students)){
+    const base = store.meta.studentBase[key]; if(!base) continue;
+    const sch = base.school;
+    if(!schoolStats[sch]) schoolStats[sch] = {scores:[], cnt:0};
+    schoolStats[sch].cnt++;
+    for(const d of (st.diagnostics||[])){ for(const k of ['A','B','C']){ if(d[k] != null && d[k] !== '') schoolStats[sch].scores.push(+d[k]); } }
+  }
+  const schoolRows = Object.entries(schoolStats).map(([sch, v]) => ({sch, cnt: v.cnt, avg: v.scores.length ? Math.round(v.scores.reduce((a,b)=>a+b,0)/v.scores.length) : null})).sort((a,b) => (b.avg||0)-(a.avg||0));
+
+  // 인사이트
+  const insights = [];
+  if(rows.length >= 2){
+    const last = rows[rows.length-1], prev = rows[rows.length-2];
+    if(last.dAvg !== null && prev.dAvg !== null){
+      const diff = last.dAvg - prev.dAvg;
+      insights.push((diff > 0 ? '📈' : diff < 0 ? '📉' : '➡️') + ' ' + prev.label + ' → ' + last.label + ' 진단 평균 ' + (diff > 0 ? '+' : '') + diff + '점');
+    }
+  }
+  const top = schoolRows.filter(r => r.avg !== null).slice(0, 3);
+  if(top.length) insights.push('🏆 ' + curSeason().label + ' 상위 학교: ' + top.map(r => r.sch + '(' + r.avg + ')').join(', '));
+
+  document.getElementById('reportBody').innerHTML =
+    '<div class="section"><h3><span class="dot"></span>시즌별 평균 추이</h3>'
+    + svgLineChart(rows.filter(r => r.dAvg !== null || r.eAvg !== null), 'sid', [{key:'dAvg', label:'진단평가 평균', color:'#6366f1'},{key:'eAvg', label:'시험점수 평균', color:'#f59e0b'}])
+    + '<table style="margin-top:12px"><tr><th>시즌</th><th>학생</th><th>진단평가 평균</th><th>시험점수 평균</th></tr>'
+    + rows.map(r => '<tr><td>' + r.label + '</td><td>' + r.students + '</td><td style="font-feature-settings:tnum">' + (r.dAvg ?? '–') + '</td><td style="font-feature-settings:tnum">' + (r.eAvg ?? '–') + '</td></tr>').join('')
+    + '</table></div>'
+    + '<div class="section"><h3><span class="dot"></span>현재 시즌 학교별 평균 (진단평가)</h3>'
+    + '<table><tr><th>학교</th><th>학생 수</th><th>진단 평균</th></tr>'
+    + schoolRows.map(r => '<tr><td>' + r.sch + '</td><td>' + r.cnt + '</td><td style="font-feature-settings:tnum;color:' + (r.avg === null ? 'var(--text-3)' : r.avg >= 80 ? 'var(--success)' : r.avg >= 60 ? 'var(--warn)' : 'var(--danger)') + '">' + (r.avg ?? '–') + '</td></tr>').join('')
+    + '</table></div>'
+    + (insights.length ? '<div class="diag-panel" style="margin-top:20px"><div class="ph">💡 인사이트</div>' + insights.map(i => '<div style="margin:4px 0;font-size:13px">' + i + '</div>').join('') + '</div>' : '');
+}
+
+// SVG 라인차트 — keys: x축은 series 인덱스로 사용
+function svgLineChart(data, xKey, series){
+  if(data.length === 0) return '<div class="empty">데이터 없음</div>';
+  const W = 700, H = 220, pad = {l:40, r:20, t:20, b:40};
+  const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+  const allVals = [];
+  for(const s of series){ for(const d of data){ if(d[s.key] !== null && d[s.key] !== undefined) allVals.push(d[s.key]); } }
+  const ymin = 0, ymax = 100;
+  const xStep = data.length === 1 ? cw / 2 : cw / (data.length - 1);
+  const xPos = (i) => data.length === 1 ? pad.l + cw / 2 : pad.l + i * xStep;
+  const yPos = (v) => pad.t + ch - ((v - ymin) / (ymax - ymin)) * ch;
+  const gridLines = [0, 25, 50, 75, 100].map(v => '<line x1="' + pad.l + '" y1="' + yPos(v) + '" x2="' + (pad.l + cw) + '" y2="' + yPos(v) + '" stroke="#e5e5ea" stroke-dasharray="2,3"/>' + '<text x="' + (pad.l - 8) + '" y="' + (yPos(v) + 4) + '" font-size="10" fill="#a1a1aa" text-anchor="end">' + v + '</text>').join('');
+  const xLabels = data.map((d, i) => '<text x="' + xPos(i) + '" y="' + (H - pad.b + 16) + '" font-size="10" fill="#52525b" text-anchor="middle">' + d.label.replace(/^[0-9]{4}학년도 /, '') + '</text>').join('');
+  const lines = series.map(s => {
+    const pts = data.map((d, i) => d[s.key] !== null && d[s.key] !== undefined ? (xPos(i) + ',' + yPos(d[s.key])) : null).filter(p => p);
+    const path = pts.length >= 2 ? '<polyline points="' + pts.join(' ') + '" stroke="' + s.color + '" stroke-width="2.5" fill="none"/>' : '';
+    const dots = data.map((d, i) => d[s.key] !== null && d[s.key] !== undefined ? '<circle cx="' + xPos(i) + '" cy="' + yPos(d[s.key]) + '" r="4" fill="' + s.color + '"/><text x="' + xPos(i) + '" y="' + (yPos(d[s.key]) - 8) + '" font-size="10" fill="' + s.color + '" font-weight="700" text-anchor="middle">' + d[s.key] + '</text>' : '').join('');
+    return path + dots;
+  }).join('');
+  const legend = '<div class="chart-legend">' + series.map(s => '<div class="lg"><div class="sw" style="background:' + s.color + '"></div>' + s.label + '</div>').join('') + '</div>';
+  return '<div class="chart"><svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + gridLines + xLabels + lines + '</svg></div>' + legend;
+}
+
+// ───────── 학생 모달 ─────────
+window.openStudent = function(encKey){
+  modalEnc = encKey;
+  modalTab = 'plan';
+  renderModal();
+  document.getElementById('modal').classList.add('show');
+};
+window.closeModal = function(){ document.getElementById('modal').classList.remove('show'); save(); };
+
+function renderModal(){
+  const key = decodeURIComponent(modalEnc);
+  const base = store.meta.studentBase[key]; if(!base) return;
+  const cs = curSeason();
+  const st = cs.students[key];
+  if(!st){
+    // 졸업생인데 현재 시즌에 없는 경우 → 시즌 데이터 둘러보기 모드만 가능
+    renderModalArchive(key, base);
+    return;
+  }
+  const ex = cs.schoolExams[base.school] || {};
+  const d = ddayOf(base.school);
+  if((!st.weekly || st.weekly.length === 0) && ex.start){
+    const sd = parseDate(ex.start);
+    st.weekly = [];
+    for(let i = 4; i >= 1; i--){
+      const ws = new Date(sd); ws.setDate(ws.getDate() - i*7);
+      const we = new Date(ws); we.setDate(we.getDate() + 6);
+      st.weekly.push({
+        week: (5-i) + '주차',
+        range: (ws.getMonth()+1) + '/' + ws.getDate() + ' ~ ' + (we.getMonth()+1) + '/' + we.getDate(),
+        content: i === 4 ? '전 단원 개념 점검' : i === 3 ? '단원별 기본 문제' : i === 2 ? '심화·서술형' : '실전 모의·오답 정리',
+        dailyMin: i <= 2 ? 90 : 60, done: false
+      });
+    }
+  }
+  const units = st.units || [];
+  const avg = units.length ? Math.round(units.reduce((a,u) => a + (st.progress[u] || 0), 0) / units.length) : 0;
+  const g = base.gradeOverride || base.grade;
+  const gcls = g === '중2' ? 'g2' : 'g3';
+  const ddCol = d === null || d < 0 ? 'var(--text-3)' : d <= 7 ? 'var(--danger)' : d <= 21 ? 'var(--warn)' : 'var(--success)';
+  const linkedBadge = base.msbId ? '<span class="badge linked">MSB ' + base.msbId + '</span>' : '';
+  const encKey = modalEnc;
+
+  let body = '';
+  if(modalTab === 'plan'){
+    const unitRows = units.map((u,i) =>
+      '<tr><td><input type="text" value="' + u.replace(/"/g,'&quot;') + '" onchange="updUnit(\'' + encKey + '\',' + i + ',this.value)"></td>'
+      + '<td style="width:140px"><input type="number" min="0" max="100" value="' + (st.progress[u]||0) + '" onchange="updProg(\'' + encKey + '\',' + i + ',this.value)"> %</td>'
+      + '<td style="width:50px;text-align:center"><button class="ghost" onclick="delUnit(\'' + encKey + '\',' + i + ')" style="color:var(--danger);padding:4px 8px">✕</button></td></tr>'
+    ).join('');
+    const weekRows = (st.weekly || []).map((w,i) =>
+      '<div class="weekrow">'
+      + '<div class="week-tag">' + w.week + '</div>'
+      + '<div><input type="text" value="' + (w.content||'').replace(/"/g,'&quot;') + '" onchange="updWeek(\'' + encKey + '\',' + i + ',\'content\',this.value)"></div>'
+      + '<div class="range">' + (w.range || '') + '</div>'
+      + '<div><input type="number" value="' + (w.dailyMin||0) + '" onchange="updWeek(\'' + encKey + '\',' + i + ',\'dailyMin\',this.value)" style="width:70px"> 분</div>'
+      + '<div style="text-align:center"><input type="checkbox" ' + (w.done?'checked':'') + ' onchange="updWeek(\'' + encKey + '\',' + i + ',\'done\',this.checked)"></div>'
+      + '</div>'
+    ).join('');
+    body = '<div class="section"><h3><span class="dot"></span>시험 범위 단원 · 진도</h3>'
+      + '<table><tr><th>단원</th><th>진도</th><th></th></tr>' + (unitRows || '<tr><td colspan="3" style="text-align:center;color:var(--text-3)">단원 없음</td></tr>') + '</table>'
+      + '<button class="add-btn" style="margin-top:10px" onclick="addUnit(\'' + encKey + '\')">＋ 단원 추가</button></div>'
+      + '<div class="section"><h3><span class="dot"></span>주차별 학습 계획</h3>'
+      + '<div class="weekplan"><div class="weekrow head"><div>주차</div><div>학습 내용</div><div>기간</div><div>일일 학습량</div><div>완료</div></div>'
+      + (weekRows || '<div style="padding:20px;color:var(--text-3);font-size:13px;text-align:center">시험일을 먼저 입력하면 4주 계획이 자동 생성됩니다</div>') + '</div>'
+      + ((!st.weekly || st.weekly.length === 0) && ex.start ? '<button class="add-btn" style="margin-top:10px;border-style:solid;background:var(--accent-soft)" onclick="genWeeks(\'' + encKey + '\')">📅 주차별 계획 생성</button>' : '')
+      + '</div>'
+      + '<div class="section"><h3><span class="dot"></span>메모</h3>'
+      + '<textarea placeholder="취약 단원, 보강 필요, 학부모 상담 등…" onchange="updMemo(\'' + encKey + '\', this.value)">' + (st.memo||'').replace(/</g,'&lt;') + '</textarea></div>';
+  } else if(modalTab === 'scores'){
+    body = '<div class="section"><h3><span class="dot"></span>진단평가 (A=상 / B=중 / C=하)</h3>'
+      + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">'
+      + '<input type="text" placeholder="매쓰사이뱅크 학생 ID" value="' + (base.msbId||'') + '" onchange="updMsbId(\'' + encKey + '\', this.value)" style="background:var(--surface-2);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none;min-width:220px">'
+      + '<button class="add-btn" style="margin:0" onclick="syncOne(\'' + encKey + '\')">↓ 매쓰사이뱅크에서 가져오기</button>'
+      + '<button class="add-btn" style="margin:0;border-style:solid;background:var(--accent-soft)" onclick="addDiag(\'' + encKey + '\')">＋ 회차 추가</button>'
+      + '</div>'
+      + renderDiagTable(encKey, st.diagnostics || []) + renderDiagAnalysis(st.diagnostics || [])
+      + '</div>'
+      + '<div class="section"><h3><span class="dot"></span>미리보는 기말 · 모의고사 점수</h3>'
+      + renderExamTable(encKey, st.exams || {}) + '</div>';
+  } else if(modalTab === 'growth'){
+    body = renderGrowthTab(key, base);
+  } else if(modalTab === 'settings'){
+    body = renderSettingsTab(key, base);
+  }
+
+  document.getElementById('modalBody').innerHTML =
+    '<div class="mhead"><div><h2>' + base.name + '<span class="badge ' + gcls + '">' + g + '</span>' + linkedBadge + '</h2>'
+    + '<div class="meta">' + base.school + ' · ' + curSeason().label + ' · 시험 ' + (ex.start||'미정') + (ex.end ? ' ~ ' + ex.end : '') + '</div></div>'
+    + '<div class="mactions"><button class="no-print" onclick="window.print()">인쇄</button><button class="close ghost" onclick="closeModal()">✕</button></div></div>'
+    + '<div class="msummary">'
+    + '<div><div class="k">D-day</div><div class="v" style="color:' + ddCol + '">' + ddayLabel(d) + '</div></div>'
+    + '<div><div class="k">평균 진도</div><div class="v">' + avg + '<span style="font-size:14px;color:var(--text-3)">%</span></div></div>'
+    + '<div><div class="k">단원 수</div><div class="v">' + units.length + '</div></div>'
+    + '<div><div class="k">진단 회차</div><div class="v">' + (st.diagnostics||[]).length + '</div></div>'
+    + '</div>'
+    + '<div class="subtabs">'
+    + ['plan','scores','growth','settings'].map(t => '<div class="subtab ' + (modalTab===t?'active':'') + '" onclick="switchModalTab(\'' + t + '\')">' + ({plan:'📋 계획', scores:'📊 점수', growth:'📈 성장 추이', settings:'⚙ 설정'})[t] + '</div>').join('')
+    + '</div>'
+    + body;
+}
+
+window.switchModalTab = function(t){ modalTab = t; renderModal(); };
+
+function renderGrowthTab(key, base){
+  // 학생의 시즌별 데이터 수집
+  const seasonIds = Object.keys(store.seasons).sort();
+  const rows = seasonIds.map(sid => {
+    const sn = store.seasons[sid];
+    const st = sn.students[key];
+    if(!st) return null;
+    const aA = diagAvg(st.diagnostics, 'A'), aB = diagAvg(st.diagnostics, 'B'), aC = diagAvg(st.diagnostics, 'C');
+    const examVals = EXAM_ORDER.map(k => st.exams && st.exams[k]).filter(v => v != null && v !== '').map(Number);
+    const eAvg = examVals.length ? Math.round(examVals.reduce((a,b)=>a+b,0)/examVals.length) : null;
+    return { sid, label: sn.label, aA, aB, aC, eAvg };
+  }).filter(r => r);
+  if(rows.length === 0) return '<div class="empty">시즌 데이터 없음</div>';
+  const series = [
+    {key:'aA', label:'A (상)', color:'#ef4444'},
+    {key:'aB', label:'B (중)', color:'#f59e0b'},
+    {key:'aC', label:'C (하)', color:'#10b981'},
+    {key:'eAvg', label:'시험 평균', color:'#6366f1'},
+  ];
+  return '<div class="section"><h3><span class="dot"></span>시즌별 점수 추이</h3>'
+    + svgLineChart(rows, 'sid', series)
+    + '<table style="margin-top:14px"><tr><th>시즌</th><th>A 상</th><th>B 중</th><th>C 하</th><th>시험 평균</th></tr>'
+    + rows.map(r => '<tr><td>' + r.label + '</td><td style="font-feature-settings:tnum">' + (r.aA??'–') + '</td><td style="font-feature-settings:tnum">' + (r.aB??'–') + '</td><td style="font-feature-settings:tnum">' + (r.aC??'–') + '</td><td style="font-feature-settings:tnum">' + (r.eAvg??'–') + '</td></tr>').join('')
+    + '</table></div>';
+}
+
+function renderSettingsTab(key, base){
+  return '<div class="section"><h3><span class="dot"></span>학생 기본 정보</h3>'
+    + '<div class="formrow">'
+    + '<div><label>학년 (시즌 무관 기본값)</label><select onchange="updBase(\'' + modalEnc + '\',\'grade\',this.value)"><option value="중2"' + (base.grade==='중2'?' selected':'') + '>중2</option><option value="중3"' + (base.grade==='중3'?' selected':'') + '>중3</option></select></div>'
+    + '<div><label>현재 시즌 학년 override (선택)</label><select onchange="updBase(\'' + modalEnc + '\',\'gradeOverride\',this.value)"><option value="">(기본값 사용)</option><option value="중2"' + (base.gradeOverride==='중2'?' selected':'') + '>중2</option><option value="중3"' + (base.gradeOverride==='중3'?' selected':'') + '>중3</option></select></div>'
+    + '<div><label>매쓰사이뱅크 ID</label><input type="text" value="' + (base.msbId||'') + '" onchange="updBase(\'' + modalEnc + '\',\'msbId\',this.value)"></div>'
+    + '<div><label>입학일</label><input type="month" value="' + (base.joinedAt||'') + '" onchange="updBase(\'' + modalEnc + '\',\'joinedAt\',this.value)"></div>'
+    + '</div>'
+    + '<button class="danger" onclick="archiveStudent(\'' + modalEnc + '\')" style="margin-top:14px">🎓 졸업/탈퇴 처리 (현 시즌부터 숨김)</button>'
+    + '</div>';
+}
+
+window.updBase = function(encKey, field, val){
+  const key = decodeURIComponent(encKey);
+  store.meta.studentBase[key][field] = val || null;
+  save(); renderModal();
+};
+window.archiveStudent = function(encKey){
+  const key = decodeURIComponent(encKey);
+  if(!confirm(store.meta.studentBase[key].name + ' 학생을 졸업/탈퇴 처리할까요?\n(현재 및 이후 시즌에서 숨김. 과거 시즌 데이터는 아카이브 탭에서 조회 가능)')) return;
+  store.meta.studentBase[key].archived = true;
+  closeModal();
+};
+
+function renderDiagTable(encKey, diags){
+  if(!diags || !diags.length) return '<div style="padding:20px;color:var(--text-3);font-size:13px;text-align:center;background:var(--surface-2);border-radius:10px">진단평가 회차 없음</div>';
+  const rows = diags.map((d,i) => {
+    const total = (d.A !== '' && d.A != null ? +d.A : 0) + (d.B !== '' && d.B != null ? +d.B : 0) + (d.C !== '' && d.C != null ? +d.C : 0);
+    const cnt = ['A','B','C'].filter(k => d[k] !== '' && d[k] != null).length;
+    const avg = cnt ? Math.round(total / cnt) : 0;
+    const ac = avg >= 80 ? 'var(--success)' : avg >= 60 ? 'var(--warn)' : 'var(--danger)';
+    return '<tr>'
+      + '<td style="width:140px"><input type="date" value="' + (d.date||'') + '" onchange="updDiag(\'' + encKey + '\',' + i + ',\'date\',this.value)"></td>'
+      + '<td style="width:80px"><input type="number" min="0" max="100" value="' + (d.A==null?'':d.A) + '" onchange="updDiag(\'' + encKey + '\',' + i + ',\'A\',this.value)" placeholder="상"></td>'
+      + '<td style="width:80px"><input type="number" min="0" max="100" value="' + (d.B==null?'':d.B) + '" onchange="updDiag(\'' + encKey + '\',' + i + ',\'B\',this.value)" placeholder="중"></td>'
+      + '<td style="width:80px"><input type="number" min="0" max="100" value="' + (d.C==null?'':d.C) + '" onchange="updDiag(\'' + encKey + '\',' + i + ',\'C\',this.value)" placeholder="하"></td>'
+      + '<td style="width:70px;text-align:center;font-weight:700;color:' + ac + ';font-feature-settings:tnum">' + (cnt ? avg : '–') + '</td>'
+      + '<td><input type="text" value="' + (d.note||'').replace(/"/g,'&quot;') + '" onchange="updDiag(\'' + encKey + '\',' + i + ',\'note\',this.value)" placeholder="비고"></td>'
+      + '<td style="width:40px;text-align:center"><button class="ghost" onclick="delDiag(\'' + encKey + '\',' + i + ')" style="color:var(--danger);padding:4px 6px">✕</button></td></tr>';
+  }).join('');
+  return '<table><tr><th>일자</th><th>A (상)</th><th>B (중)</th><th>C (하)</th><th>평균</th><th>비고</th><th></th></tr>' + rows + '</table>';
+}
+
+function renderDiagAnalysis(diags){
+  if(!diags || !diags.length) return '';
+  const aA = diagAvg(diags,'A'), aB = diagAvg(diags,'B'), aC = diagAvg(diags,'C');
+  if(aA === null && aB === null && aC === null) return '';
+  const sorted = [...diags].sort((a,b) => (a.date||'').localeCompare(b.date||''));
+  const trend = (k) => { const arr = sorted.map(d => d[k]).filter(v => v !== '' && v != null).map(Number); return arr.length < 2 ? 0 : arr[arr.length-1] - arr[0]; };
+  const tA = trend('A'), tB = trend('B'), tC = trend('C');
+  const weak = [];
+  if(aA !== null && aA < 60) weak.push('상(A)');
+  if(aB !== null && aB < 70) weak.push('중(B)');
+  if(aC !== null && aC < 80) weak.push('하(C)');
+  let diag;
+  if(weak.length === 0) diag = '모든 난이도 기준 충족 — 심화 비중 확대';
+  else if(weak.includes('하(C)')) diag = '기본기 보강 필요 — 개념 재학습';
+  else if(weak.includes('중(B)')) diag = '응용 단계 막힘 — 유형별 패턴 학습';
+  else diag = '심화 영역만 약함 — 고난도 서술형 집중';
+  const arrow = (v) => v > 0 ? '<span style="color:var(--success)">▲' + v + '</span>' : v < 0 ? '<span style="color:var(--danger)">▼' + (-v) + '</span>' : '<span style="color:var(--text-3)">－</span>';
+  const cell = (label, v, t) => '<div><div class="k">' + label + '</div><div class="v">' + (v === null ? '–' : v) + (v !== null ? '<span style="font-size:12px;color:var(--text-3)">점</span>' : '') + ' ' + arrow(t) + '</div></div>';
+  return '<div class="diag-panel"><div class="ph">📊 분석 (회차 ' + diags.length + ')</div>'
+    + '<div class="stat3">' + cell('A 상', aA, tA) + cell('B 중', aB, tB) + cell('C 하', aC, tC) + '</div>'
+    + '<div class="verdict"><strong style="color:var(--accent)">진단:</strong> ' + diag + (weak.length ? ' <span style="color:var(--text-2)">(취약: ' + weak.join(', ') + ')</span>' : '') + '</div></div>';
+}
+
+function renderExamTable(encKey, exams){
+  const sc = (v) => v === null || v == null || v === '' ? 'var(--text-3)' : v >= 80 ? 'var(--success)' : v >= 60 ? 'var(--warn)' : 'var(--danger)';
+  const rows = EXAM_ORDER.map(k => {
+    const v = exams[k]; const dk = k + '_date', nk = k + '_note';
+    return '<tr><td style="font-weight:600">' + EXAM_LABELS[k] + '</td>'
+      + '<td style="width:140px"><input type="date" value="' + (exams[dk]||'') + '" onchange="updExam(\'' + encKey + '\',\'' + dk + '\',this.value)"></td>'
+      + '<td style="width:110px"><input type="number" min="0" max="100" value="' + (v==null?'':v) + '" onchange="updExam(\'' + encKey + '\',\'' + k + '\',this.value)" placeholder="0~100" style="font-weight:700;color:' + sc(v) + '"></td>'
+      + '<td><input type="text" value="' + (exams[nk]||'').replace(/"/g,'&quot;') + '" onchange="updExam(\'' + encKey + '\',\'' + nk + '\',this.value)" placeholder="비고"></td></tr>';
+  }).join('');
+  const vals = EXAM_ORDER.map(k => exams[k]).filter(v => v != null && v !== '').map(Number);
+  let sum = '';
+  if(vals.length){
+    const avg = Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+    const grp = (ks) => { const a = ks.map(k=>exams[k]).filter(v=>v!=null&&v!=='').map(Number); return a.length ? Math.round(a.reduce((x,y)=>x+y,0)/a.length) : null; };
+    const fA = grp(['mockFinal1','mockFinal2']), mA = grp(['mock1','mock2']);
+    const trend = (k1,k2) => { const v1 = exams[k1], v2 = exams[k2]; return (v1!=null&&v1!==''&&v2!=null&&v2!=='') ? (+v2 - +v1) : 0; };
+    const tF = trend('mockFinal1','mockFinal2'), tM = trend('mock1','mock2');
+    const arrow = (v) => v > 0 ? '<span style="color:var(--success)">▲' + v + '</span>' : v < 0 ? '<span style="color:var(--danger)">▼' + (-v) + '</span>' : '<span style="color:var(--text-3)">－</span>';
+    sum = '<div class="diag-panel" style="margin-top:12px"><div class="ph">📈 시험 점수 요약</div><div class="stat3">'
+      + '<div><div class="k">전체 평균</div><div class="v">' + avg + '<span style="font-size:12px;color:var(--text-3)">점</span></div></div>'
+      + '<div><div class="k">미리보는 기말</div><div class="v">' + (fA ?? '–') + (fA !== null ? '<span style="font-size:12px;color:var(--text-3)">점</span>' : '') + ' ' + arrow(tF) + '</div></div>'
+      + '<div><div class="k">모의고사</div><div class="v">' + (mA ?? '–') + (mA !== null ? '<span style="font-size:12px;color:var(--text-3)">점</span>' : '') + ' ' + arrow(tM) + '</div></div>'
+      + '</div></div>';
+  }
+  return '<table><tr><th>시험명</th><th>일자</th><th>점수</th><th>비고</th></tr>' + rows + '</table>' + sum;
+}
+
+// 점수/계획 업데이트
+window.updUnit = function(encKey, i, val){
+  const key = decodeURIComponent(encKey);
+  const st = curSeason().students[key];
+  const old = st.units[i]; st.units[i] = val;
+  if(st.progress[old] !== undefined){ st.progress[val] = st.progress[old]; delete st.progress[old]; }
+  silent();
+};
+window.updProg = function(encKey, i, val){
+  const key = decodeURIComponent(encKey);
+  const st = curSeason().students[key];
+  const u = st.units[i];
+  st.progress[u] = Math.max(0, Math.min(100, parseInt(val)||0));
+  save();
+};
+window.delUnit = function(encKey, i){
+  const key = decodeURIComponent(encKey);
+  const st = curSeason().students[key];
+  const u = st.units[i]; st.units.splice(i, 1); delete st.progress[u];
+  save(); renderModal();
+};
+window.addUnit = function(encKey){
+  const key = decodeURIComponent(encKey);
+  curSeason().students[key].units.push('새 단원');
+  save(); renderModal();
+};
+window.updWeek = function(encKey, i, field, val){
+  const key = decodeURIComponent(encKey);
+  curSeason().students[key].weekly[i][field] = field === 'dailyMin' ? (parseInt(val)||0) : val;
+  silent();
+};
+window.updMemo = function(encKey, val){
+  const key = decodeURIComponent(encKey);
+  curSeason().students[key].memo = val;
+  silent();
+};
+window.genWeeks = function(encKey){
+  const key = decodeURIComponent(encKey);
+  const base = store.meta.studentBase[key];
+  const ex = curSeason().schoolExams[base.school]; if(!ex || !ex.start) return;
+  const sd = new Date(ex.start + 'T00:00:00');
+  const st = curSeason().students[key];
+  st.weekly = [];
+  for(let i = 4; i >= 1; i--){
+    const ws = new Date(sd); ws.setDate(ws.getDate() - i*7);
+    const we = new Date(ws); we.setDate(we.getDate() + 6);
+    st.weekly.push({
+      week: (5-i) + '주차',
+      range: (ws.getMonth()+1) + '/' + ws.getDate() + ' ~ ' + (we.getMonth()+1) + '/' + we.getDate(),
+      content: i === 4 ? '전 단원 개념 점검' : i === 3 ? '단원별 기본 문제' : i === 2 ? '심화·서술형' : '실전 모의·오답 정리',
+      dailyMin: i <= 2 ? 90 : 60, done: false
+    });
+  }
+  save(); renderModal();
+};
+window.updMsbId = function(encKey, val){
+  const key = decodeURIComponent(encKey);
+  store.meta.studentBase[key].msbId = val.trim();
+  silent();
+};
+window.addDiag = function(encKey){
+  const key = decodeURIComponent(encKey);
+  const st = curSeason().students[key];
+  if(!st.diagnostics) st.diagnostics = [];
+  st.diagnostics.push({date: new Date().toISOString().slice(0,10), A:'', B:'', C:'', note:''});
+  save(); renderModal();
+};
+window.updDiag = function(encKey, i, field, val){
+  const key = decodeURIComponent(encKey);
+  if(field === 'A' || field === 'B' || field === 'C') val = val === '' ? '' : Math.max(0, Math.min(100, parseInt(val)||0));
+  curSeason().students[key].diagnostics[i][field] = val;
+  save(); renderModal();
+};
+window.delDiag = function(encKey, i){
+  const key = decodeURIComponent(encKey);
+  curSeason().students[key].diagnostics.splice(i, 1);
+  save(); renderModal();
+};
+window.updExam = function(encKey, field, val){
+  const key = decodeURIComponent(encKey);
+  const st = curSeason().students[key];
+  if(!st.exams) st.exams = {};
+  if(EXAM_ORDER.includes(field)) val = val === '' ? null : Math.max(0, Math.min(100, parseInt(val)||0));
+  st.exams[field] = val;
+  save(); renderModal();
+};
+
+// ───────── 매쓰사이뱅크 ─────────
+async function msbGet(path, cfg){
+  const url = cfg.endpoint.replace(/\/$/, '') + path;
+  const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + cfg.apiKey, 'Accept': 'application/json' } });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+async function fetchScores(msbId, cfg){
+  const dj = await msbGet('/students/' + encodeURIComponent(msbId) + '/diagnostics', cfg);
+  const arr = Array.isArray(dj) ? dj : (dj.diagnostics || dj.data || []);
+  const diagnostics = arr.map(d => ({
+    date: d.date || d.examDate || '',
+    A: d.A == null ? (d.scoreA == null ? (d.high == null ? '' : d.high) : d.scoreA) : d.A,
+    B: d.B == null ? (d.scoreB == null ? (d.mid == null ? '' : d.mid) : d.scoreB) : d.B,
+    C: d.C == null ? (d.scoreC == null ? (d.low == null ? '' : d.low) : d.scoreC) : d.C,
+    note: d.note || d.memo || ''
+  }));
+  let exams = {};
+  try{
+    const ej = await msbGet('/students/' + encodeURIComponent(msbId) + '/exams', cfg);
+    const ex = Array.isArray(ej) ? ej : (ej.exams || ej.data || []);
+    if(Array.isArray(ex)){
+      for(const e of ex){
+        const t = e.type || e.examType || e.code;
+        if(EXAM_ORDER.includes(t)){
+          exams[t] = e.score == null ? (e.value == null ? null : e.value) : e.score;
+          if(e.date) exams[t + '_date'] = e.date;
+          if(e.note) exams[t + '_note'] = e.note;
+        }
+      }
+    } else {
+      for(const k of EXAM_ORDER){
+        if(ex[k] != null){
+          const v = ex[k];
+          if(typeof v === 'object'){ exams[k] = v.score == null ? null : v.score; if(v.date) exams[k+'_date'] = v.date; if(v.note) exams[k+'_note'] = v.note; }
+          else exams[k] = v;
+        }
+      }
+    }
+  }catch(e){}
+  return { diagnostics, exams };
+}
+window.syncOne = async function(encKey){
+  const cfg = JSON.parse(localStorage.getItem(MSB_CFG_KEY) || '{}');
+  if(!cfg.endpoint || !cfg.apiKey){ alert('먼저 매쓰사이뱅크 설정을 입력해주세요'); return; }
+  const key = decodeURIComponent(encKey);
+  const base = store.meta.studentBase[key];
+  if(!base.msbId){ alert('이 학생의 매쓰사이뱅크 학생 ID를 먼저 입력해주세요'); return; }
+  try{
+    const r = await fetchScores(base.msbId, cfg);
+    const st = curSeason().students[key];
+    st.diagnostics = r.diagnostics;
+    st.exams = Object.assign({}, st.exams || {}, r.exams);
+    save(); renderModal();
+    alert('진단 ' + r.diagnostics.length + '회차 · 시험 ' + Object.keys(r.exams).filter(k => EXAM_ORDER.includes(k)).length + '개 가져옴');
+  }catch(e){ alert('동기화 실패: ' + e.message); }
+};
+window.syncAll = async function(){
+  const cfg = JSON.parse(localStorage.getItem(MSB_CFG_KEY) || '{}');
+  if(!cfg.endpoint || !cfg.apiKey){ alert('먼저 매쓰사이뱅크 설정을 입력해주세요'); return; }
+  if(!confirm('현재 시즌(' + curSeason().label + ') · 매쓰사이뱅크 ID가 매핑된 모든 학생을 동기화합니다. 계속할까요?')) return;
+  let ok = 0, skip = 0, fail = 0;
+  const cs = curSeason();
+  for(const s of activeStudents()){
+    if(!s.msbId){ skip++; continue; }
+    try{
+      const r = await fetchScores(s.msbId, cfg);
+      const st = cs.students[s.key];
+      st.diagnostics = r.diagnostics;
+      st.exams = Object.assign({}, st.exams || {}, r.exams);
+      ok++;
+    }catch(e){ fail++; }
+  }
+  save();
+  alert('동기화 완료\n성공 ' + ok + ' · 실패 ' + fail + ' · ID 미설정 ' + skip);
+};
+window.autoMap = async function(){
+  const cfg = JSON.parse(localStorage.getItem(MSB_CFG_KEY) || '{}');
+  if(!cfg.endpoint || !cfg.apiKey){ alert('먼저 매쓰사이뱅크 설정을 입력해주세요'); return; }
+  let json;
+  try{ json = await msbGet('/students', cfg); }catch(e){ alert('학생 목록 가져오기 실패: ' + e.message); return; }
+  const list = Array.isArray(json) ? json : (json.students || json.data || []);
+  const norm = list.map(s => ({
+    id: String(s.id == null ? (s.studentId == null ? (s.msbId == null ? (s.uid || '') : s.msbId) : s.studentId) : s.id),
+    name: (s.name || s.studentName || '').trim(),
+    school: (s.school || s.schoolName || '').trim(),
+    grade: (s.grade || '').toString().trim()
+  })).filter(s => s.id && s.name);
+  let matched = 0, ambiguous = 0;
+  const candidates = []; // 자사관에 없는 MSB 학생
+  const mappedIds = new Set();
+  for(const s of activeStudents()){
+    if(s.msbId){ mappedIds.add(s.msbId); continue; }
+    let cand = norm.filter(n => n.name === s.name && n.school === s.school);
+    if(cand.length === 0) cand = norm.filter(n => n.name === s.name);
+    if(cand.length === 1){ store.meta.studentBase[s.key].msbId = cand[0].id; matched++; mappedIds.add(cand[0].id); }
+    else if(cand.length > 1){ ambiguous++; }
+  }
+  // 신규 후보: MSB에는 있는데 자사관에 없는 학생
+  for(const n of norm){
+    if(mappedIds.has(n.id)) continue;
+    const key = n.name + '|' + n.school;
+    if(store.meta.studentBase[key]) continue;
+    candidates.push(n);
+  }
+  save();
+  let msg = '자동 매핑 완료\n매칭 ' + matched + '명 · 동명이인 ' + ambiguous + '명 · 매쓰사이뱅크 총 ' + norm.length + '명';
+  if(candidates.length){
+    msg += '\n\n신규 후보 ' + candidates.length + '명 발견. 추가하시겠습니까?';
+    if(confirm(msg)){
+      for(const c of candidates){
+        const key = c.name + '|' + c.school;
+        store.meta.studentBase[key] = { name: c.name, school: c.school, grade: c.grade || '중3', msbId: c.id, joinedAt: new Date().toISOString().slice(0,7), archived: false, gradeOverride: null };
+        // 현재 시즌에 추가
+        const g = c.grade || '중3';
+        curSeason().students[key] = { units: DEFAULT_UNITS[g] ? [...DEFAULT_UNITS[g]] : [], progress:{}, weekly:[], memo:'', diagnostics:[], exams:{} };
+      }
+      save();
+      alert('신규 ' + candidates.length + '명 추가됨');
+    }
+  } else alert(msg);
+};
+window.openMsbCfg = function(){
+  const cfg = JSON.parse(localStorage.getItem(MSB_CFG_KEY) || '{}');
+  const ep = prompt('매쓰사이뱅크 API 엔드포인트', cfg.endpoint || '');
+  if(ep === null) return;
+  const apiKey = prompt('API 키 (Bearer 토큰)', cfg.apiKey || '');
+  if(apiKey === null) return;
+  localStorage.setItem(MSB_CFG_KEY, JSON.stringify({endpoint: ep, apiKey: apiKey}));
+  alert('저장 완료\n다음 순서로 진행:\n1) 자동 매핑\n2) 동기화');
+};
+
+// ───────── 신규 시즌 ─────────
+window.openNewSeason = function(){
+  const y = parseInt(document.getElementById('selYear').value);
+  const sem = parseInt(document.getElementById('selSem').value);
+  const type = document.getElementById('selType').value;
+  document.getElementById('modalBody2').innerHTML =
+    '<div class="mhead"><div><h2>＋ 새 시즌 생성</h2><div class="meta">시험 시즌을 새로 만듭니다</div></div>'
+    + '<button class="close ghost" onclick="closeModal2()">✕</button></div>'
+    + '<div class="formrow"><div><label>학년도</label><input type="number" id="nsYear" value="' + y + '"></div>'
+    + '<div><label>학기</label><select id="nsSem"><option value="1"' + (sem===1?' selected':'') + '>1학기</option><option value="2"' + (sem===2?' selected':'') + '>2학기</option></select></div></div>'
+    + '<div class="formrow"><div><label>시험</label><select id="nsType"><option value="중간"' + (type==='중간'?' selected':'') + '>중간고사</option><option value="기말"' + (type==='기말'?' selected':'') + '>기말고사</option></select></div>'
+    + '<div><label>복사 대상</label><select id="nsCopy"><option value="">(빈 시즌)</option>' + Object.keys(store.seasons).sort().map(sid => '<option value="' + sid + '">' + store.seasons[sid].label + '</option>').join('') + '</select></div></div>'
+    + '<div class="formrow full"><label class="check"><input type="checkbox" id="nsGradeUp"> <span>새 시즌 학년 +1 (중2→중3, 중3→졸업 아카이브로 자동)</span></label></div>'
+    + '<div class="formrow full"><label class="check"><input type="checkbox" id="nsAutoBackup" checked> <span>전환 전 현재 store JSON 자동 다운로드</span></label></div>'
+    + '<div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end"><button onclick="closeModal2()">취소</button><button class="primary" onclick="createSeason()">생성</button></div>';
+  document.getElementById('modal2').classList.add('show');
+};
+window.closeModal2 = function(){ document.getElementById('modal2').classList.remove('show'); };
+window.createSeason = function(){
+  const y = parseInt(document.getElementById('nsYear').value);
+  const sem = parseInt(document.getElementById('nsSem').value);
+  const type = document.getElementById('nsType').value;
+  const copyFrom = document.getElementById('nsCopy').value;
+  const gradeUp = document.getElementById('nsGradeUp').checked;
+  const backup = document.getElementById('nsAutoBackup').checked;
+  const id = y + '-' + sem + '-' + type;
+  if(store.seasons[id]){ if(!confirm('이미 존재하는 시즌입니다. 덮어쓸까요?')) return; }
+  if(backup){
+    const blob = new Blob([JSON.stringify(store, null, 2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = '자사관_백업_' + new Date().toISOString().slice(0,10) + '_사전.json'; a.click();
+  }
+  if(gradeUp){
+    for(const [key, base] of Object.entries(store.meta.studentBase)){
+      if(base.archived) continue;
+      const g = base.gradeOverride || base.grade;
+      if(g === '중3'){ base.archived = true; }
+      else if(g === '중2'){ if(base.gradeOverride){ base.gradeOverride = '중3'; } else { base.grade = '중3'; } }
+    }
+  }
+  if(copyFrom){
+    const src = store.seasons[copyFrom];
+    const newSn = makeSeason(y, sem, type, store, null);
+    // 시험일은 src 기준으로 (시작일/종료일은 비워두는 게 안전)
+    store.seasons[id] = newSn;
+  } else {
+    store.seasons[id] = makeSeason(y, sem, type, store, null);
+  }
+  store.meta.activeSeason = id;
+  save(); closeModal2();
+  alert('시즌 생성: ' + store.seasons[id].label);
+};
+window.delSeason = function(){
+  const sid = store.meta.activeSeason;
+  if(Object.keys(store.seasons).length <= 1){ alert('마지막 시즌은 삭제할 수 없습니다'); return; }
+  if(!confirm(store.seasons[sid].label + ' 시즌을 삭제할까요?\n(이 시즌의 모든 계획·점수 데이터가 사라집니다)')) return;
+  delete store.seasons[sid];
+  store.meta.activeSeason = Object.keys(store.seasons).sort().pop();
+  save();
+};
+window.copySeason = function(){
+  const sids = Object.keys(store.seasons).sort();
+  const idx = sids.indexOf(store.meta.activeSeason);
+  if(idx <= 0){ alert('직전 시즌이 없습니다'); return; }
+  const prev = sids[idx-1];
+  if(!confirm(store.seasons[prev].label + ' 시즌의 학생 명단·학교 명단을 현재 시즌에 복사할까요?\n(현재 시즌의 점수/계획은 유지)')) return;
+  const src = store.seasons[prev];
+  const cur = curSeason();
+  // 학생 명단/단원만 복사 (점수는 안 옮김)
+  for(const [key, srcSt] of Object.entries(src.students)){
+    if(!cur.students[key]){
+      cur.students[key] = { units: [...(srcSt.units||[])], progress:{}, weekly:[], memo:'', diagnostics:[], exams:{} };
+    }
+  }
+  save();
+  alert('복제 완료');
+};
+
+// ───────── 신규 학생 추가 ─────────
+window.openAddStudent = function(){
+  document.getElementById('modalBody2').innerHTML =
+    '<div class="mhead"><div><h2>＋ 학생 추가</h2><div class="meta">현재 시즌에 새 학생을 등록합니다</div></div>'
+    + '<button class="close ghost" onclick="closeModal2()">✕</button></div>'
+    + '<div class="formrow"><div><label>이름</label><input type="text" id="asName" placeholder="홍길동"></div>'
+    + '<div><label>학교</label><input type="text" id="asSchool" placeholder="○○중학교"></div></div>'
+    + '<div class="formrow"><div><label>학년</label><select id="asGrade"><option value="중2">중2</option><option value="중3" selected>중3</option></select></div>'
+    + '<div><label>매쓰사이뱅크 ID (선택)</label><input type="text" id="asMsb" placeholder="(자동 매핑으로도 가능)"></div></div>'
+    + '<div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end"><button onclick="closeModal2()">취소</button><button class="primary" onclick="addStudent()">추가</button></div>';
+  document.getElementById('modal2').classList.add('show');
+};
+window.addStudent = function(){
+  const name = document.getElementById('asName').value.trim();
+  const school = document.getElementById('asSchool').value.trim();
+  const grade = document.getElementById('asGrade').value;
+  const msbId = document.getElementById('asMsb').value.trim();
+  if(!name || !school){ alert('이름·학교 필수'); return; }
+  const key = name + '|' + school;
+  if(store.meta.studentBase[key]){ alert('이미 존재하는 학생입니다'); return; }
+  store.meta.studentBase[key] = { name, school, grade, msbId, joinedAt: new Date().toISOString().slice(0,7), archived: false, gradeOverride: null };
+  curSeason().students[key] = { units: DEFAULT_UNITS[grade] ? [...DEFAULT_UNITS[grade]] : [], progress:{}, weekly:[], memo:'', diagnostics:[], exams:{} };
+  // 학교 시험일이 시즌에 없으면 default 추가
+  if(!curSeason().schoolExams[school]) curSeason().schoolExams[school] = {start:'',end:''};
+  save(); closeModal2();
+};
+
+// ───────── 이벤트 ─────────
+document.getElementById('bulkSetBtn').onclick = () => {
+  const s = prompt('전체 학교 시험 시작일 (YYYY-MM-DD)', '2026-06-30'); if(!s) return;
+  const e = prompt('전체 학교 시험 종료일 (YYYY-MM-DD)', '2026-07-02'); if(!e) return;
+  const cs = curSeason();
+  for(const sch of activeSchools()){ cs.schoolExams[sch] = {start: s, end: e}; }
+  save();
+};
+document.getElementById('exportBtn').onclick = () => {
+  const blob = new Blob([JSON.stringify(store, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = '자사관_백업_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
+};
+document.getElementById('importBtn').onclick = () => document.getElementById('importFile').click();
+document.getElementById('importFile').onchange = (e) => {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => { try{ store = JSON.parse(ev.target.result); ensureSeason(store.meta.activeSeason); save(); alert('불러오기 완료'); }catch(err){ alert('파일 형식 오류'); } };
+  r.readAsText(f);
+};
+document.getElementById('resetBtn').onclick = () => {
+  if(!confirm('모든 데이터를 초기화합니다 (시즌·학생 포함). 계속할까요?')) return;
+  localStorage.removeItem(KEY); store = loadStore(); save();
+};
+document.getElementById('msbBtn').onclick = openMsbCfg;
+document.getElementById('autoMapBtn').onclick = autoMap;
+document.getElementById('syncAllBtn').onclick = syncAll;
+document.getElementById('newSeasonBtn').onclick = openNewSeason;
+document.getElementById('copySeasonBtn').onclick = copySeason;
+document.getElementById('delSeasonBtn').onclick = delSeason;
+document.getElementById('addStudentBtn').onclick = openAddStudent;
+['selYear','selSem','selType'].forEach(id => document.getElementById(id).addEventListener('change', switchSeason));
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('view-' + t.dataset.view).classList.add('active');
+    if(t.dataset.view === 'report') renderReport();
+    if(t.dataset.view === 'archive') renderArchive();
+  };
+});
+['search','filterSchool','filterGrade','sortBy'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderStudents);
+  document.getElementById(id).addEventListener('change', renderStudents);
+});
+document.getElementById('archSearch').addEventListener('input', renderArchive);
+document.getElementById('modal').onclick = (e) => { if(e.target.id === 'modal') closeModal(); };
+document.getElementById('modal2').onclick = (e) => { if(e.target.id === 'modal2') closeModal2(); };
+
+function render(){
+  fillSeasonSelects();
+  document.getElementById('filterSchool').innerHTML = '<option value="">전체 학교</option>' + activeSchools().map(s => '<option>' + s + '</option>').join('');
+  renderStats(); renderStudents(); renderSchools();
+}
+render();
+</script>
+</body>
+</html>
